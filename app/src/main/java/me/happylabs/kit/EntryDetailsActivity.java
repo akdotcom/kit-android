@@ -45,7 +45,6 @@ public class EntryDetailsActivity extends Activity implements AdapterView.OnItem
         Log.v(this.getLocalClassName(), uriString);
         Uri uri = Uri.parse(uriString);
 
-        String photoUriString = null;
         Long lastContacted = null;
         ImageView contactImage = (ImageView) findViewById(R.id.contactImage);
 
@@ -62,9 +61,12 @@ public class EntryDetailsActivity extends Activity implements AdapterView.OnItem
             TextView contactName = (TextView) findViewById(R.id.contactName);
             contactName.setText(name);
 
-            photoUriString = cursor.getString(cursor.getColumnIndex(Contacts.PHOTO_THUMBNAIL_URI));
+            String photoUriString =
+                    cursor.getString(cursor.getColumnIndex(Contacts.PHOTO_THUMBNAIL_URI));
             if (photoUriString != null) {
                 contactImage.setImageURI(Uri.parse(photoUriString));
+            } else {
+                contactImage.setImageResource(R.drawable.ic_action_person);
             }
 
             int lastContactedIndex = cursor.getColumnIndex(Contacts.LAST_TIME_CONTACTED);
@@ -83,9 +85,6 @@ public class EntryDetailsActivity extends Activity implements AdapterView.OnItem
             toast.show();
             return;
         }
-//        if (photoUriString == null) {
-//            // TODO(ak): default contact profile image?
-//        }
 
 
         if (rowId == -1L) {

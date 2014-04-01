@@ -137,8 +137,7 @@ public class MainActivity extends ActionBarActivity {
                     if (thumbnailUri != null) {
                         imageView.setImageURI(Uri.parse(thumbnailUri));
                     } else {
-                        imageView.setImageURI(null);
-//                        badge.setImageToDefault();
+                        imageView.setImageResource(R.drawable.ic_action_person);
                     }
                     c.close();
                 } else {
