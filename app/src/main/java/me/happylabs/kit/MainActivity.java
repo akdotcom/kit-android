@@ -1,13 +1,16 @@
 package me.happylabs.kit;
 
 import android.app.Activity;
+import android.app.LoaderManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
@@ -40,7 +43,8 @@ import static java.util.concurrent.TimeUnit.*;
 import me.happylabs.kit.app.R;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements
+        LoaderManager.LoaderCallbacks<Cursor>{
 
     public static final String DETAILS_LOOKUP_URI = "me.happylabs.kit.DETAILS_LOOKUP_URI";
     public static final String DETAILS_DB_ROWID = "me.happylabs.kit.DETAILS_DB_ROWID";
@@ -57,7 +61,11 @@ public class MainActivity extends ActionBarActivity {
     public static final int INSERT_ID = Menu.FIRST;
     public static final int RUN_NOTIFICATIONS = Menu.FIRST;
 
+    // Loader for this component
+    private static final int CONTACTS_LOADER = 0;
+
     private ContactsDbAdapter mDbHelper;
+    private ResourceCursorAdapter mAdapter;
 
 
     @Override
@@ -84,37 +92,34 @@ public class MainActivity extends ActionBarActivity {
             // Manually start background service
             PeriodicUpdater periodicUpdater = new PeriodicUpdater();
             periodicUpdater.registerAlarmService(this);
-
         }
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+        // Now for the UI
         setContentView(R.layout.activity_main);
         ListView listView = (ListView) findViewById(R.id.entriesList);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
-//                contactDetails(contactUri, l);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(contactUri);
                 startActivity(intent);
             }
         });
 
-        // TODO(ak): use a cursor loader
-        Cursor cursor = mDbHelper.fetchAllContacts();
+        /*
+         * Initializes the CursorLoader. The URL_LOADER value is eventually passed
+         * to onCreateLoader().
+         */
+        getLoaderManager().initLoader(CONTACTS_LOADER, null, this);
 
-        ResourceCursorAdapter adapter = new ResourceCursorAdapter(
-                getApplicationContext(),
+        mAdapter = new ResourceCursorAdapter(
+                this,
                 R.layout.item_last_contact,
-                cursor ) {
+                null, 0 ) {
             @Override
             public void bindView(View view, Context context, Cursor cursor) {
                 TextView tvName = (TextView) view.findViewById(R.id.contactName);
-//                TextView tvTime = (TextView) view.findViewById(R.id.contactTime);
                 ImageView imageView = (ImageView) view.findViewById(R.id.quickbadge);
 
                 int lookupKeyIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_LOOKUP_KEY);
@@ -158,11 +163,55 @@ public class MainActivity extends ActionBarActivity {
                 });
             }
         };
-
-        listView.setAdapter(adapter);
+        listView.setAdapter(mAdapter);
     }
 
-//
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(CONTACTS_LOADER, null, this);
+
+    }
+
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle)
+    {
+        /*
+         * Takes action based on the ID of the Loader that's being created
+         */
+        switch (loaderID) {
+            case CONTACTS_LOADER:
+                // Returns a new CursorLoader
+                return new SimpleCursorLoader(this) {
+                    @Override
+                    public Cursor loadInBackground() {
+                        return mDbHelper.fetchAllContacts();
+                    }
+                };
+            default:
+                // An invalid id was passed in
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        /*
+         * Moves the query results into the adapter, causing the
+         * ListView fronting this adapter to re-display
+         */
+        mAdapter.changeCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        // This is called when the last Cursor provided to onLoadFinished()
+        // above is about to be closed.  We need to make sure we are no
+        // longer using it.
+        mAdapter.swapCursor(null);    }
+
+    //
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //
