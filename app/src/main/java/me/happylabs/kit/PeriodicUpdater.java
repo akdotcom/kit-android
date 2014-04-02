@@ -133,7 +133,8 @@ public class PeriodicUpdater extends BroadcastReceiver {
                 e.printStackTrace();
             }
         }
-        notificationBuilder.setSmallIcon(context.getApplicationInfo().icon);
+
+        notificationBuilder.setSmallIcon(R.drawable.notification_icon);
 
         // Use the db row id as the notification id so we know how to update it in the future.
         int rowId = (int) dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID));
