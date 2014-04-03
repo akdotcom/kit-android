@@ -2,25 +2,19 @@ package me.happylabs.kit;
 
 import android.app.Activity;
 import android.app.LoaderManager;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.CallLog;
+import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.PhoneLookup;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,35 +25,21 @@ import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-
-import static java.util.concurrent.TimeUnit.*;
-
 import me.happylabs.kit.app.R;
 
 
 public class MainActivity extends ActionBarActivity implements
         LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static final String DETAILS_LOOKUP_URI = "me.happylabs.kit.DETAILS_LOOKUP_URI";
     public static final String DETAILS_DB_ROWID = "me.happylabs.kit.DETAILS_DB_ROWID";
 
-    public static final int FREQUENCY_HOURLY = 0;
-    public static final int FREQUENCY_DAILY = 1;
-    public static final int FREQUENCY_WEEKLY = 2;
-    public static final int FREQUENCY_MONTHLY = 3;
+    public static final int FREQUENCY_DAILY = 0;
+    public static final int FREQUENCY_WEEKLY = 1;
+    public static final int FREQUENCY_MONTHLY = 2;
+    public static final int FREQUENCY_YEARLY = 3;
 
-    public static final int CONTACT_TYPE_PHONE = 1;
-    public static final int CONTACT_TYPE_SMS = 2;
-    public static final int CONTACT_TYPE_MANUAL = 3;
-
-    public static final int INSERT_ID = Menu.FIRST;
-    public static final int RUN_NOTIFICATIONS = Menu.FIRST;
+    public static final int CONTACT_SYSTEM = 1;
+    public static final int CONTACT_TYPE_MANUAL = 2;
 
     // Loader for this component
     private static final int CONTACTS_LOADER = 0;
@@ -102,8 +82,9 @@ public class MainActivity extends ActionBarActivity implements
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
-                Intent intent = new Intent(Intent.ACTION_VIEW);
+                Intent intent = new Intent(getApplicationContext(), EntryDetailsActivity.class);
                 intent.setData(contactUri);
+                intent.setAction(Intent.ACTION_MAIN);
                 startActivity(intent);
             }
         });
@@ -154,14 +135,6 @@ public class MainActivity extends ActionBarActivity implements
                 final int dbIdIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID);
                 final long dbId = cursor.getLong(dbIdIndex);
                 view.setTag(R.id.view_db_rowid, dbId);
-
-                View optionsView = view.findViewById(R.id.contactOptions);
-                optionsView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        contactDetails(lookupUri, dbId);
-                    }
-                });
             }
         };
         listView.setAdapter(mAdapter);
@@ -212,15 +185,6 @@ public class MainActivity extends ActionBarActivity implements
         // longer using it.
         mAdapter.swapCursor(null);    }
 
-    //
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         boolean result = super.onCreateOptionsMenu(menu);
@@ -243,15 +207,6 @@ public class MainActivity extends ActionBarActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void contactDetails(Uri contactUri, Long rowId) {
-        Intent intent = new Intent(this, EntryDetailsActivity.class);
-        intent.putExtra(DETAILS_LOOKUP_URI, contactUri.toString());
-        if (rowId != null) {
-            intent.putExtra(DETAILS_DB_ROWID, rowId);
-        }
-        startActivity(intent);
-    }
-
     public void addContact(View view) {
         addContact();
     }
@@ -269,7 +224,8 @@ public class MainActivity extends ActionBarActivity implements
                 Uri contactUri = data.getData();
                 Log.v(this.getClass().getCanonicalName(), "picker returned URI: " + contactUri);
                 Intent intent = new Intent(this, EntryDetailsActivity.class);
-                intent.putExtra(DETAILS_LOOKUP_URI, contactUri.toString());
+                intent.setData(contactUri);
+                intent.setAction(Intent.ACTION_EDIT);
                 startActivity(intent);
             }
         }

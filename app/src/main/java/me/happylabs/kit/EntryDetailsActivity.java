@@ -1,17 +1,14 @@
 package me.happylabs.kit;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
-import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -19,9 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ImageView;
+import android.widget.QuickContactBadge;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,8 +29,6 @@ import java.util.GregorianCalendar;
 import me.happylabs.kit.app.R;
 
 public class EntryDetailsActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
-
-    public static final int REMOVE_ID = Menu.FIRST;
 
     private ContactsDbAdapter mDbHelper;
     private String lookupKey = null;
@@ -51,28 +46,26 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         Intent intent = getIntent();
         rowId = intent.getLongExtra(MainActivity.DETAILS_DB_ROWID, -1L);
 
-        String uriString = intent.getStringExtra(MainActivity.DETAILS_LOOKUP_URI);
-        Log.v(this.getLocalClassName(), uriString);
-        Uri uri = Uri.parse(uriString);
+        Uri uri = intent.getData();
 
-        Long lastContacted = null;
-        ImageView contactImage = (ImageView) findViewById(R.id.contactImage);
+        long lastContacted = 0L;
+        QuickContactBadge contactImage = (QuickContactBadge) findViewById(R.id.contactImage);
+        contactImage.assignContactUri(uri);
 
         String[] contactFields = {
                 Contacts.DISPLAY_NAME,
-                Contacts.PHOTO_THUMBNAIL_URI,
+                Contacts.PHOTO_URI,
                 Contacts.LOOKUP_KEY,
-                Contacts.LAST_TIME_CONTACTED
+                Contacts.LAST_TIME_CONTACTED,
         };
         Cursor cursor = getContentResolver().query(uri, contactFields, null, null, null);
         if (cursor.moveToFirst()) {
             lookupKey = cursor.getString(cursor.getColumnIndex(Contacts.LOOKUP_KEY));
             String name = cursor.getString(cursor.getColumnIndex(Contacts.DISPLAY_NAME));
-            TextView contactName = (TextView) findViewById(R.id.contactName);
-            contactName.setText(name);
+            setTitle(name);
 
             String photoUriString =
-                    cursor.getString(cursor.getColumnIndex(Contacts.PHOTO_THUMBNAIL_URI));
+                    cursor.getString(cursor.getColumnIndex(Contacts.PHOTO_URI));
             if (photoUriString != null) {
                 contactImage.setImageURI(Uri.parse(photoUriString));
             } else {
@@ -102,7 +95,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             rowId = mDbHelper.createContact(
                     cursor.getString(cursor.getColumnIndex(Contacts.LOOKUP_KEY)),
                     lastContacted,
-                    MainActivity.CONTACT_TYPE_MANUAL,
+                    MainActivity.CONTACT_SYSTEM,
                     MainActivity.FREQUENCY_MONTHLY,
                     1);
         }
@@ -115,25 +108,47 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         int freqType = dbCursor.getInt(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_FREQUENCY_TYPE));
         int freqScalar = dbCursor.getInt(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_FREQUENCY_SCALAR));
 
-        Spinner spinner = (Spinner) findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        Spinner fScalarSpinner = (Spinner) findViewById(R.id.fScalarSpinner);
+        ArrayAdapter<CharSequence> scalarAdapter = ArrayAdapter.createFromResource(this,
                 R.array.number_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        scalarAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
-        spinner.setSelection(freqScalar - 1); // Index is one less than value, since 0-indexed
-        spinner.setOnItemSelectedListener(this);
+        fScalarSpinner.setAdapter(scalarAdapter);
+        fScalarSpinner.setSelection(freqScalar - 1); // Index is one less than value, since 0-indexed
+        fScalarSpinner.setOnItemSelectedListener(this);
 
-        Spinner spinner2 = (Spinner) findViewById(R.id.spinner2);
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
+        Spinner fTypeSpinner = (Spinner) findViewById(R.id.fTypeSpinner);
+        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this,
                 R.array.frequency_unit_array, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
-        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinner2.setAdapter(adapter2);
-        spinner2.setSelection(freqType);
-        spinner2.setOnItemSelectedListener(this);
+        fTypeSpinner.setAdapter(typeAdapter);
+        fTypeSpinner.setSelection(freqType);
+        fTypeSpinner.setOnItemSelectedListener(this);
+
+//        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
+//        final String[] freqArray = getResources().getStringArray(R.array.frequency);
+//        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+//                Log.v("SeekBar", i + " " + b);
+//                // TODO(ak) this doesn't quite work. actually think about it for a bit
+//                int window = (int) Math.ceil(100.0 / (freqArray.length - 1));
+//                setTitle(freqArray[i/window]);
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//                Log.v("SeekBar", "onStartTrackingTouch");
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//                Log.v("SeekBar", "onStopTrackingTouch");
+//            }
+//        });
 
 
         final long lastContact = dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED));
@@ -147,26 +162,6 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
                 newFragment.show(getFragmentManager(), "datePicker");
             }
         });
-
-
-        Button removeButton = (Button) findViewById(R.id.removeButton);
-        removeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deleteContact();
-            }
-        });
-
-//        View view = findViewById(R.id.contactButton);
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(Intent.ACTION_VIEW);
-//                Uri uri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
-//                intent.setData(uri);
-//                startActivity(intent);
-//            }
-//        });
 
         dbCursor.close();
     }
@@ -184,8 +179,8 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         tvLastContact.setText(lastContactString);
     }
 
-    public void updateLastContact(long lastContact) {
-        mDbHelper.updateLastContacted(rowId, lastContact);
+    public void updateLastContact(long lastContact, int contactType) {
+        mDbHelper.updateLastContacted(rowId, lastContact, contactType);
         updateLastContactTextView(lastContact);
     }
 
@@ -201,7 +196,9 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
             Calendar c = Calendar.getInstance();
-            c.setTimeInMillis(mInitialTime);
+            if (mInitialTime != 0) {
+                c.setTimeInMillis(mInitialTime);
+            }
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
             int day = c.get(Calendar.DAY_OF_MONTH);
@@ -214,7 +211,9 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             // Do something with the date chosen by the user
             Log.v("DatePickerFragment", "Date picked");
             Calendar calendar = new GregorianCalendar(year, month, day);
-            ((EntryDetailsActivity) getActivity()).updateLastContact(calendar.getTimeInMillis());
+            EntryDetailsActivity activity = (EntryDetailsActivity) getActivity();
+            activity.updateLastContact(
+                    calendar.getTimeInMillis(), MainActivity.CONTACT_TYPE_MANUAL);
         }
     }
 
@@ -222,23 +221,20 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        Log.v("EntryDetailsActivity", "onItemSelected called");
-
-
         // Update to the frequency type
-        if (R.id.spinner2 == adapterView.getId()) {
-            Log.v("EntryDetailsActivity", "spinner2 touched! " + i + " " + l);
-            Spinner freqScalar = (Spinner) findViewById(R.id.spinner);
+        if (R.id.fTypeSpinner == adapterView.getId()) {
+            // Get the complimentary value
+            Spinner freqScalar = (Spinner) findViewById(R.id.fScalarSpinner);
             // Type constant values correspond to their position in the selector. Scalar values
             // are off by one.
             mDbHelper.updateContactFrequency(rowId, i, freqScalar.getSelectedItemPosition() + 1);
         }
 
-        if (R.id.spinner == adapterView.getId()) {
-            Log.v("EntryDetailsActivity", "spinner touched! " + i + " " + l);
+        if (R.id.fScalarSpinner == adapterView.getId()) {
+            // Get the complimentary value
+            Spinner freqType = (Spinner) findViewById(R.id.fTypeSpinner);
             // Type constant values correspond to their position in the selector. Scalar values
             // are off by one.
-            Spinner freqType = (Spinner) findViewById(R.id.spinner2);
             mDbHelper.updateContactFrequency(rowId, freqType.getSelectedItemPosition(), i + 1);
         }
     }
@@ -250,10 +246,9 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, REMOVE_ID, 0, R.string.menu_remove);
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.entry, menu);
-        return true;
+        boolean result = super.onCreateOptionsMenu(menu);
+        menu.add(0, R.id.remove_contact, 0, R.string.menu_remove);
+        return result;
     }
 
     @Override
@@ -262,9 +257,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == REMOVE_ID) {
+        if (id == R.id.remove_contact) {
             deleteContact();
         }
         return super.onOptionsItemSelected(item);

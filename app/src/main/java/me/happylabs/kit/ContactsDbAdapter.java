@@ -34,6 +34,7 @@ public class ContactsDbAdapter {
     private static final long DAILY_MILLIS   = 86400000L;
     private static final long WEEKLY_MILLIS  = 604800000L;
     private static final long MONTHLY_MILLIS = 2592000000L; // 30 days
+    private static final long YEARLY_MILLIS = 31536000000L; // 30 days
 
     /**
      * Database creation sql statement
@@ -129,7 +130,6 @@ public class ContactsDbAdapter {
     /**
      * Calculate when the next contact should be given the previous timing and desired frequency.
      *
-     * TODO(ak): actually implement
      * @param lastContacted
      * @param frequencyType
      * @param frequencyScalar
@@ -141,9 +141,6 @@ public class ContactsDbAdapter {
         }
         long unitMillis = 0;
         switch(frequencyType) {
-            case(MainActivity.FREQUENCY_HOURLY):
-                unitMillis = HOURLY_MILLIS;
-                break;
             case(MainActivity.FREQUENCY_DAILY):
                 unitMillis = DAILY_MILLIS;
                 break;
@@ -152,6 +149,9 @@ public class ContactsDbAdapter {
                 break;
             case(MainActivity.FREQUENCY_MONTHLY):
                 unitMillis = MONTHLY_MILLIS;
+                break;
+            case(MainActivity.FREQUENCY_YEARLY):
+                unitMillis = YEARLY_MILLIS;
                 break;
             default:
                 Log.e("calculateNextContact", "Unknown frequencyType: " + frequencyType);
@@ -229,10 +229,12 @@ public class ContactsDbAdapter {
      */
     public boolean updateContact(long rowId,
                                  String lookupKey,
-                                 Long lastContacted) {
+                                 Long lastContacted,
+                                 Integer lastContactType) {
         ContentValues args = new ContentValues();
         args.put(KEY_LOOKUP_KEY, lookupKey);
         args.put(KEY_LAST_CONTACTED, lastContacted);
+        args.put(KEY_FREQUENCY_TYPE, lastContactType);
 
         Cursor cursor = fetchContact(rowId);
         int freqType = cursor.getInt(cursor.getColumnIndex(KEY_FREQUENCY_TYPE));
@@ -244,9 +246,10 @@ public class ContactsDbAdapter {
         return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
-    public boolean updateLastContacted(long rowId, Long lastContacted) {
+    public boolean updateLastContacted(long rowId, Long lastContacted, int type) {
         ContentValues args = new ContentValues();
         args.put(KEY_LAST_CONTACTED, lastContacted);
+        args.put(KEY_LAST_CONTACT_TYPE, type);
 
         Cursor cursor = fetchContact(rowId);
         int freqType = cursor.getInt(cursor.getColumnIndex(KEY_FREQUENCY_TYPE));

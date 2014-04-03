@@ -4,4 +4,5 @@
     <item type="id" name="view_lookup_uri" />
     <item type="id" name="view_db_rowid" />
     <item type="id" name="run_notifications" />
+    <item type="id" name="remove_contact" />
 </resources>

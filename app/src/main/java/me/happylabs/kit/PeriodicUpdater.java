@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.MediaStore;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import java.io.IOException;
@@ -48,10 +49,9 @@ public class PeriodicUpdater extends BroadcastReceiver {
             lastContactUpdater.update(context, contactsDb);
             Cursor cursor = contactsDb.fetchAllContacts();
             while (cursor.moveToNext()) {
-                Log.v("PeriodicUpdater", "evaluating row " + cursor.getLong(cursor.getColumnIndex(contactsDb.KEY_ROWID)));
                 int nextContactIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
                 int lastContactedIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED);
-                int lookupKeyIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_LOOKUP_KEY);
+
                 long nextContact = cursor.getLong(nextContactIndex);
                 long lastContacted = cursor.getLong(lastContactedIndex);
 
@@ -64,11 +64,9 @@ public class PeriodicUpdater extends BroadcastReceiver {
 
 
     protected void registerAlarmService(Context context) {
-        Log.v("PeriodicUpdater", "registerAlarmService called");
         alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Intent periodicIntent = new Intent(context, PeriodicUpdater.class);
         alarmIntent = PendingIntent.getBroadcast(context, 0, periodicIntent, 0);
-        // TODO(Ak): set these to proper values (HALF_DAY)
         alarmMgr.setInexactRepeating(
                 AlarmManager.ELAPSED_REALTIME,
                 AlarmManager.INTERVAL_FIFTEEN_MINUTES,
@@ -81,12 +79,12 @@ public class PeriodicUpdater extends BroadcastReceiver {
                                 Cursor dbCursor) {
         Log.v("PeriodicUpdate", "sendReminder called");
         int lookupKeyIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LOOKUP_KEY);
-        int freqTypeIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_FREQUENCY_TYPE);
-        int freqScalarIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_FREQUENCY_SCALAR);
+        int lastContactIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED);
+        int rowIdIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID);
 
         String lookupKey = dbCursor.getString(lookupKeyIndex);
-        int freqType = dbCursor.getInt(freqTypeIndex);
-        int freqScalar = dbCursor.getInt(freqScalarIndex);
+        long lastContact = dbCursor.getLong(lastContactIndex);
+        long rowId = dbCursor.getLong(rowIdIndex);
 
         // Fetch information about the user we're reminding about
         Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
@@ -105,17 +103,23 @@ public class PeriodicUpdater extends BroadcastReceiver {
 
         // Grab info from the different cursors as needed to fill in the notification details
         String name = c.getString(c.getColumnIndex(Contacts.DISPLAY_NAME));
-        String frequencyDescription = TextUtils.describeFrequency(freqType, freqScalar);
-        Intent intent = new Intent(Intent.ACTION_VIEW);
+        CharSequence durationDescription = DateUtils.getRelativeTimeSpanString(
+                lastContact, System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS);
+
+        Intent intent = new Intent(context, EntryDetailsActivity.class);
         Uri uri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
         intent.setData(uri);
+        intent.putExtra(MainActivity.DETAILS_DB_ROWID, rowId);
+        intent.setAction(Intent.ACTION_MAIN);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
         Notification.Builder notificationBuilder = new Notification.Builder(context)
-                .setContentTitle("Keep in touch with " + name)
-                .setContentText("It's been " + frequencyDescription
-                        + " since you last talked")
-                .setContentIntent(pendingIntent);
+                .setSmallIcon(R.drawable.notification_icon)
+                .setContentTitle(name)
+                .setContentText("You last talked " + durationDescription)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setPriority(Notification.PRIORITY_LOW);
 
         // Use the profile photo of the contact in question if available.
         String photoUriString = c.getString(c.getColumnIndex(Contacts.PHOTO_URI));
@@ -134,11 +138,10 @@ public class PeriodicUpdater extends BroadcastReceiver {
             }
         }
 
-        notificationBuilder.setSmallIcon(R.drawable.notification_icon);
-
         // Use the db row id as the notification id so we know how to update it in the future.
-        int rowId = (int) dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID));
+        int notificationId =
+                (int) dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID));
         Notification notification = notificationBuilder.build();
-        notificationManager.notify(rowId, notification);
+        notificationManager.notify(notificationId, notification);
     }
 }

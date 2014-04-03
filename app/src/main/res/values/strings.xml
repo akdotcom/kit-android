@@ -13,10 +13,16 @@
     <string name="menu_remove">Remove</string>
     <string name="run_notifications">Run Notifications</string>
     <string-array name="frequency_unit_array">
-        <item>hour</item>
         <item>day</item>
         <item>week</item>
         <item>month</item>
+        <item>year</item>
+    </string-array>
+    <string-array name="frequency_unit_array_plural">
+        <item>days</item>
+        <item>weeks</item>
+        <item>months</item>
+        <item>years</item>
     </string-array>
     <string-array name="number_array">
         <item>1</item>
@@ -25,5 +31,30 @@
         <item>4</item>
         <item>5</item>
         <item>6</item>
+    </string-array>
+    <string-array name="frequency">
+        <item>1 day</item>
+        <item>2 days</item>
+        <item>3 days</item>
+        <item>4 days</item>
+        <item>5 days</item>
+        <item>6 days</item>
+        <item>1 week</item>
+        <item>2 weeks</item>
+        <item>3 weeks</item>
+        <item>1 month</item>
+        <item>2 months</item>
+        <item>3 months</item>
+        <item>4 months</item>
+        <item>5 months</item>
+        <item>6 months</item>
+        <item>7 months</item>
+        <item>8 months</item>
+        <item>9 months</item>
+        <item>10 months</item>
+        <item>11 months</item>
+        <item>1 year</item>
+        <item>2 years</item>
+        <item>3 years</item>
     </string-array>
 </resources>
