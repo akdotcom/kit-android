@@ -20,7 +20,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:theme="@android:style/Theme.DeviceDefault.Light.Dialog.NoActionBar.MinWidth"
             android:name="me.happylabs.kit.EntryDetailsActivity"
             android:label="@string/title_activity_entry"
             android:parentActivityName="me.happylabs.kit.MainActivity" >

@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    >
 
 <LinearLayout
     android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="?android:attr/listPreferredItemPaddingStart"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="?android:attr/listPreferredItemPaddingStart">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -41,6 +45,7 @@
 
     <LinearLayout
         android:orientation="horizontal"
+        android:id="@+id/lastContactInfo"
         android:paddingTop="?android:attr/listPreferredItemPaddingStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,40 +56,44 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Last in touch:"
+            android:text="Last contact:"
             android:paddingRight="5dp"
-            android:id="@+id/nextDescription"
+            android:id="@+id/lastDescription"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
-    </LinearLayout>
-
-    <LinearLayout
-            android:orientation="horizontal"
-            android:paddingLeft="?android:attr/listPreferredItemPaddingStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Last Contact"
+            android:textStyle="bold"
+            android:text="LAST CONTACT"
             android:paddingRight="10dp"
             android:id="@+id/lastContact"
             android:layout_toRightOf="@+id/nextDescription" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Set to now"
-            android:id="@+id/resetButton"
-            android:layout_toRightOf="@+id/nextContact"
-            android:layout_below="@+id/spinner"
-            android:layout_centerHorizontal="true" />
-
     </LinearLayout>
+
+    <!--<LinearLayout-->
+            <!--android:orientation="horizontal"-->
+            <!--android:paddingLeft="?android:attr/listPreferredItemPaddingStart"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true">-->
+
+
+        <!--<Button-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Set to now"-->
+            <!--android:id="@+id/resetButton"-->
+            <!--android:layout_toRightOf="@+id/nextContact"-->
+            <!--android:layout_below="@+id/spinner"-->
+            <!--android:focusable="false"-->
+            <!--android:focusableInTouchMode="false"-->
+            <!--android:layout_centerHorizontal="true" />-->
+
+    <!--</LinearLayout>-->
 
     <!--<ImageView-->
         <!--android:layout_width="match_parent"-->
@@ -107,21 +116,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Keep in touch every:"
             android:paddingRight="10dp"
             android:id="@+id/kitEvery"
             android:layout_toRightOf="@+id/nextDescription" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:paddingLeft="?android:attr/listPreferredItemPaddingStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true" >
 
         <Spinner
             android:layout_width="wrap_content"
@@ -137,21 +137,39 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:paddingLeft="?android:attr/listPreferredItemPaddingStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true" >
 
-</LinearLayout>
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:paddingLeft="?android:attr/listPreferredItemPaddingStart"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentLeft="true" >-->
+
+
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+        <!--android:orientation="horizontal"-->
+        <!--android:paddingLeft="?android:attr/listPreferredItemPaddingStart"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentLeft="true" >-->
+
+<!--</LinearLayout>-->
+
+    </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Remove"
         android:id="@+id/removeButton"
-    />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        />
 
-</LinearLayout>
+</RelativeLayout>

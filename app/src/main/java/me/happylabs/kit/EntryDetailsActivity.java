@@ -1,11 +1,17 @@
 package me.happylabs.kit;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
+import android.support.v7.app.ActionBarActivity;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -14,14 +20,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 import me.happylabs.kit.app.R;
 
-public class EntryDetailsActivity extends Activity implements AdapterView.OnItemSelectedListener {
+public class EntryDetailsActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 
     public static final int REMOVE_ID = Menu.FIRST;
 
@@ -125,18 +135,19 @@ public class EntryDetailsActivity extends Activity implements AdapterView.OnItem
         spinner2.setSelection(freqType);
         spinner2.setOnItemSelectedListener(this);
 
-        Button button = (Button) findViewById(R.id.resetButton);
-        button.setOnClickListener(new View.OnClickListener() {
+
+        final long lastContact = dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED));
+        updateLastContactTextView(lastContact);
+
+        View lastContactInfo = findViewById(R.id.lastContactInfo);
+        lastContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                long now = System.currentTimeMillis();
-                mDbHelper.updateLastContacted(rowId, now);
-                updateLastContactTextView(now);
+                DialogFragment newFragment = new DatePickerFragment(lastContact);
+                newFragment.show(getFragmentManager(), "datePicker");
             }
         });
 
-        long lastContact = dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED));
-        updateLastContactTextView(lastContact);
 
         Button removeButton = (Button) findViewById(R.id.removeButton);
         removeButton.setOnClickListener(new View.OnClickListener() {
@@ -161,17 +172,53 @@ public class EntryDetailsActivity extends Activity implements AdapterView.OnItem
     }
 
     public void updateLastContactTextView(Long lastContact) {
-        TextView tvNextContact = (TextView) findViewById(R.id.lastContact);
+        TextView tvLastContact = (TextView) findViewById(R.id.lastContact);
         if (lastContact == 0) {
-            tvNextContact.setText("Unknown");
+            tvLastContact.setText("Unknown");
             return;
         }
         CharSequence lastContactString = DateUtils.getRelativeTimeSpanString(
                 lastContact,
                 System.currentTimeMillis(),
                 DateUtils.DAY_IN_MILLIS);
-        tvNextContact.setText(lastContactString);
+        tvLastContact.setText(lastContactString);
     }
+
+    public void updateLastContact(long lastContact) {
+        mDbHelper.updateLastContacted(rowId, lastContact);
+        updateLastContactTextView(lastContact);
+    }
+
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+        long mInitialTime;
+
+        public DatePickerFragment(long initialTime) {
+            mInitialTime = initialTime;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(mInitialTime);
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+            Log.v("DatePickerFragment", "Date picked");
+            Calendar calendar = new GregorianCalendar(year, month, day);
+            ((EntryDetailsActivity) getActivity()).updateLastContact(calendar.getTimeInMillis());
+        }
+    }
+
+
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

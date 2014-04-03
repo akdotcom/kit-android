@@ -66,6 +66,7 @@ public class MainActivity extends ActionBarActivity implements
 
     private ContactsDbAdapter mDbHelper;
     private ResourceCursorAdapter mAdapter;
+    private LastContactUpdater mUpdater = new LastContactUpdater();
 
 
     @Override
@@ -75,8 +76,8 @@ public class MainActivity extends ActionBarActivity implements
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();
 
-        LastContactUpdater updater = new LastContactUpdater();
-        updater.update(this, mDbHelper);
+        mUpdater = new LastContactUpdater();
+        mUpdater.update(this, mDbHelper);
 
         ComponentName receiver = new ComponentName(this, PeriodicUpdater.class);
         PackageManager pm = this.getPackageManager();
@@ -169,8 +170,8 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        mUpdater.update(this, mDbHelper);
         getLoaderManager().restartLoader(CONTACTS_LOADER, null, this);
-
     }
 
 
