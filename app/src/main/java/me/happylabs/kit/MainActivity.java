@@ -8,7 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -115,7 +118,6 @@ public class MainActivity extends ActionBarActivity implements
                         Contacts.LOOKUP_KEY,
                         Contacts.DISPLAY_NAME,
                         Contacts.PHOTO_THUMBNAIL_URI,
-                        Contacts.LAST_TIME_CONTACTED
                 };
                 Cursor c = resolver.query(res, lookupFields, null, null, null);
                 if (c.moveToFirst()) {
@@ -129,6 +131,20 @@ public class MainActivity extends ActionBarActivity implements
                     c.close();
                 } else {
                     tvName.setText("Unknown");
+                }
+
+                int nextContactIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
+                long nextContact = cursor.getLong(nextContactIndex);
+
+                int[] attributes = { android.R.attr.colorBackground };
+                TypedArray array = getTheme().obtainStyledAttributes(attributes);
+                int colorBackground = array.getColor(0, Color.WHITE);
+                if (nextContact < System.currentTimeMillis()) {
+                    view.setBackgroundColor(Color.WHITE);
+                } else {
+                    // Explicitly do this because otherwise reused imageViews sometimes keep their
+                    // former color
+                    view.setBackgroundColor(colorBackground);
                 }
 
                 view.setTag(R.id.view_lookup_uri, lookupUri);
