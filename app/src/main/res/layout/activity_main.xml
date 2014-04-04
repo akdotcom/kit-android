@@ -3,7 +3,7 @@
     android:layout_height="fill_parent">
     <RelativeLayout
         android:id="@+id/addBar"
-        android:onClick="a"
+        android:onClick="addContact"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
         <TextView
