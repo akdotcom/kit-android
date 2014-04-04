@@ -50,7 +50,6 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
 
         long lastContacted = 0L;
         QuickContactBadge contactImage = (QuickContactBadge) findViewById(R.id.contactImage);
-        contactImage.assignContactUri(uri);
 
         String[] contactFields = {
                 Contacts.DISPLAY_NAME,
@@ -64,12 +63,16 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             String name = cursor.getString(cursor.getColumnIndex(Contacts.DISPLAY_NAME));
             setTitle(name);
 
+            Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
+            contactImage.assignContactUri(contactUri);
+
             String photoUriString =
                     cursor.getString(cursor.getColumnIndex(Contacts.PHOTO_URI));
             if (photoUriString != null) {
                 contactImage.setImageURI(Uri.parse(photoUriString));
             } else {
-                contactImage.setImageResource(R.drawable.ic_action_person);
+//                contactImage.setImageResource(R.drawable.ic_action_person);
+                contactImage.setImageToDefault();
             }
 
             int lastContactedIndex = cursor.getColumnIndex(Contacts.LAST_TIME_CONTACTED);
@@ -169,7 +172,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
     public void updateLastContactTextView(Long lastContact) {
         TextView tvLastContact = (TextView) findViewById(R.id.lastContact);
         if (lastContact == 0) {
-            tvLastContact.setText("Unknown");
+            tvLastContact.setText("? (Tap to set)");
             return;
         }
         CharSequence lastContactString = DateUtils.getRelativeTimeSpanString(
