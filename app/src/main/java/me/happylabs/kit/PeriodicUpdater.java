@@ -77,9 +77,6 @@ public class PeriodicUpdater extends BroadcastReceiver {
 
         Notification.Builder notificationBuilder = new Notification.Builder(context)
                 .setSmallIcon(R.drawable.notification_icon)
-//                .setContentTitle(name)
-//                .setContentText(durationDescription)
-//                .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setPriority(Notification.PRIORITY_LOW);
 
@@ -186,84 +183,4 @@ public class PeriodicUpdater extends BroadcastReceiver {
                 AlarmManager.INTERVAL_HALF_DAY,
                 alarmIntent);
     }
-
-//    protected void sendReminder(Context context,
-//                                NotificationManager notificationManager,
-//                                Cursor dbCursor) {
-//        Log.v(TAG, "sendReminder called");
-//        int lookupKeyIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LOOKUP_KEY);
-//        int lastContactIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED);
-//        int rowIdIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID);
-//
-//        String lookupKey = dbCursor.getString(lookupKeyIndex);
-//        long lastContact = dbCursor.getLong(lastContactIndex);
-//        long rowId = dbCursor.getLong(rowIdIndex);
-//
-//        // Fetch information about the user we're reminding about
-//        Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
-//        ContentResolver resolver = context.getContentResolver();
-//        Uri contentUri = ContactsContract.Contacts.lookupContact(resolver, lookupUri);
-//        String[] lookupFields = {
-//                Contacts._ID,
-//                Contacts.DISPLAY_NAME,
-//                Contacts.PHOTO_URI,
-//        };
-//        Cursor c = resolver.query(contentUri, lookupFields, null, null, null);
-//        if (c == null || !c.moveToFirst()) {
-//            Log.e(TAG, "Reminder requested for non-existent contact. Lookup key: " + lookupKey);
-//            return;
-//        }
-//
-//        // Grab info from the different cursors as needed to fill in the notification details
-//        String name = c.getString(c.getColumnIndex(Contacts.DISPLAY_NAME));
-//        String durationDescription = null;
-//        if (lastContact == 0) {
-//            durationDescription = "It's been a while since you last talked";
-//        } else {
-//            durationDescription = "You last talked ";
-//            durationDescription += DateUtils.getRelativeTimeSpanString(
-//                    lastContact, System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS);
-//        }
-//
-//
-//        Intent intent = new Intent(context, EntryDetailsActivity.class);
-//        Uri uri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
-//        intent.setData(uri);
-//        intent.putExtra(MainActivity.DETAILS_DB_ROWID, rowId);
-//        intent.setAction(Intent.ACTION_MAIN);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-//
-//        Notification.Builder notificationBuilder = new Notification.Builder(context)
-//                .setSmallIcon(R.drawable.notification_icon)
-//                .setContentTitle(name)
-//                .setContentText(durationDescription)
-//                .setContentIntent(pendingIntent)
-//                .setAutoCancel(true)
-//                .setPriority(Notification.PRIORITY_LOW);
-//
-//        // Use the profile photo of the contact in question if available.
-//        String photoUriString = c.getString(c.getColumnIndex(Contacts.PHOTO_URI));
-//        if (photoUriString != null) {
-//            Uri imageUri = Uri.parse(photoUriString);
-//            try {
-//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-//                        context.getContentResolver(), imageUri);
-//                Resources res = context.getResources();
-//                int height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-//                int width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-//                bitmap = Bitmap.createScaledBitmap(bitmap, width, height, false);
-//                notificationBuilder.setLargeIcon(bitmap);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        // Use the db row id as the notification id so we know how to update it in the future.
-//        int notificationId =
-//                (int) dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID));
-//        Notification notification = notificationBuilder.build();
-//        notificationManager.notify(notificationId, notification);
-//
-//        c.close();
-//    }
 }
