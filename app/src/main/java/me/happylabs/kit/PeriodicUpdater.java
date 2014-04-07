@@ -128,9 +128,9 @@ public class PeriodicUpdater extends BroadcastReceiver {
             long lastContacted = dbCursor.getLong(lastContactedIndex);
             String durationDescription = null;
             if (lastContacted == 0) {
-                durationDescription = "It's been a while since you last talked";
+                durationDescription = context.getString(R.string.its_been_a_while);
             } else {
-                durationDescription = "You last talked ";
+                durationDescription = context.getString(R.string.you_last_talked) + " ";
                 durationDescription += DateUtils.getRelativeTimeSpanString(
                         lastContacted, System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS);
             }
@@ -150,7 +150,9 @@ public class PeriodicUpdater extends BroadcastReceiver {
             notificationManager.notify(0, notification);
 
         } else if (numNotifications > 1) {
-            notificationBuilder.setContentTitle("Keep in touch");
+            notificationBuilder.setContentTitle(context.getString(R.string.keep_in_touch));
+
+            // TODO(ak): Think about how to localize this.
             String contentText = "with ";
             if (numNotifications == 2) {
                 contentText += names.get(0) + " and " + names.get(1);
