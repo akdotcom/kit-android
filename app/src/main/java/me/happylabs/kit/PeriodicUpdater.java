@@ -62,7 +62,6 @@ public class PeriodicUpdater extends BroadcastReceiver {
         }
 
         int numNotifications = 0;
-        Bitmap bitmap = null;
         ContentResolver resolver = context.getContentResolver();
         int rowIdIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID);
         int lookupKeyIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LOOKUP_KEY);
@@ -79,6 +78,8 @@ public class PeriodicUpdater extends BroadcastReceiver {
                 .setSmallIcon(R.drawable.notification_icon)
                 .setAutoCancel(true)
                 .setPriority(Notification.PRIORITY_LOW);
+
+        boolean largeImageSet = false;
 
         while (dbCursor.moveToNext()) {
             long nextContact = dbCursor.getLong(nextContactIndex);
@@ -98,13 +99,14 @@ public class PeriodicUpdater extends BroadcastReceiver {
                     return;
                 }
                 String photoUriString = c.getString(c.getColumnIndex(Contacts.PHOTO_URI));
-                if (bitmap == null && photoUriString != null) {
+                if (!largeImageSet && photoUriString != null) {
                     Uri imageUri = Uri.parse(photoUriString);
                     try {
-                        bitmap = MediaStore.Images.Media.getBitmap(
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(
                                 context.getContentResolver(), imageUri);
                         bitmap = Bitmap.createScaledBitmap(bitmap, iconWidth, iconHeight, false);
                         notificationBuilder.setLargeIcon(bitmap);
+                        largeImageSet = true;
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -115,6 +117,9 @@ public class PeriodicUpdater extends BroadcastReceiver {
                 // Results are sorted by nextContact time descending, so we can stop iterating
                 break;
             }
+        }
+        if (!largeImageSet) {
+            // TODO(ak): do something better here?
         }
 
         if (numNotifications == 1) {

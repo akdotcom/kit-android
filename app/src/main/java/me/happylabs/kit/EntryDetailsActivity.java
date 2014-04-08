@@ -18,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.QuickContactBadge;
-import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -249,9 +248,9 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        boolean result = super.onCreateOptionsMenu(menu);
-        menu.add(0, R.id.remove_contact, 0, R.string.menu_remove);
-        return result;
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.entry, menu);
+        return true;
     }
 
     @Override
@@ -260,7 +259,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.remove_contact) {
+        if (id == R.id.action_remove_contact) {
             deleteContact();
         }
         return super.onOptionsItemSelected(item);

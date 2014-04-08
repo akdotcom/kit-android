@@ -15,9 +15,17 @@
     <string name="last_in_touch">Last in touch:</string>
     <string name="keep_in_touch_every">Keep in touch every:</string>
     <string name="add_contact">Add Contact</string>
-    <string name="its_been_a_while">It's been a while since you last talked.</string>
+    <string name="its_been_a_while">It\'s been a while since you last talked.</string>
     <string name="you_last_talked">You last talked</string>
     <string name="keep_in_touch">Keep in touch</string>
+    <string name="menu_run_notifications">Run notifications</string>
+    <string name="menu_about">About</string>
+    <string name="title_activity_about">About</string>
+    <string name="about_text1">Hi! My name is Akshay. I write apps to make people’s lives better. No advertising, no upgrades, no tricks.</string>
+    <string name="about_text2">KIT uses data found on many but not all Android phones. If you have a problem, please send me information about your device and Android version using the feedback button below.</string>
+    <string name="button_feedback">Feedback</string>
+    <string name="button_rate">Rate on Google Play</string>
+
     <string-array name="frequency_unit_array">
         <item>day</item>
         <item>week</item>
@@ -63,4 +71,5 @@
         <item>2 years</item>
         <item>3 years</item>
     </string-array>
+
 </resources>

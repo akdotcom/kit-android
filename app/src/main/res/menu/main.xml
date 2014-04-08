@@ -2,9 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="me.happylabs.kit.MainActivity" >
-    
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+
+    <item android:id="@+id/action_about"
+        android:title="@string/menu_about"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_run_notifications"
+        android:title="@string/menu_run_notifications"
         android:orderInCategory="100"
         app:showAsAction="never" />
 </menu>
