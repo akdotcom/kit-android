@@ -1,4 +1,4 @@
-package me.happylabs.kit;
+package com.lastinitial.kit;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -12,19 +12,14 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.MediaStore;
-import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.AbstractList;
 import java.util.LinkedList;
 import java.util.List;
-
-import me.happylabs.kit.app.R;
 
 /**
  * Created by ak on 3/31/14.

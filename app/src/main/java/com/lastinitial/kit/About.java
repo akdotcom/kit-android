@@ -1,4 +1,4 @@
-package me.happylabs.kit;
+package com.lastinitial.kit;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,8 +8,6 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import me.happylabs.kit.app.R;
 
 public class About extends Activity {
 
@@ -53,7 +51,7 @@ public class About extends Activity {
 
     public void rate(View view) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("market://details?id=me.happylabs.kit"));
+        intent.setData(Uri.parse("market://details?id=com.lastinitial.kit"));
         startActivity(intent);
     }
 }

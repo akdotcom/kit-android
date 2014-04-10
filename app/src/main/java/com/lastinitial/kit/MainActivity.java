@@ -1,4 +1,4 @@
-package me.happylabs.kit;
+package com.lastinitial.kit;
 
 import android.app.Activity;
 import android.app.LoaderManager;
@@ -27,13 +27,10 @@ import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
-import me.happylabs.kit.app.R;
-
-
 public class MainActivity extends ActionBarActivity implements
         LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static final String DETAILS_DB_ROWID = "me.happylabs.kit.DETAILS_DB_ROWID";
+    public static final String DETAILS_DB_ROWID = "com.lastinitial.kit.DETAILS_DB_ROWID";
 
     public static final int FREQUENCY_DAILY = 0;
     public static final int FREQUENCY_WEEKLY = 1;

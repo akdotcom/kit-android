@@ -1,4 +1,4 @@
-package me.happylabs.kit;
+package com.lastinitial.kit;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -24,8 +24,6 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-
-import me.happylabs.kit.app.R;
 
 public class EntryDetailsActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 
