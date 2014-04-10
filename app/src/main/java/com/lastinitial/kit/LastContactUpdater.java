@@ -1,4 +1,4 @@
-package me.happylabs.kit;
+package com.lastinitial.kit;
 
 import android.content.ContentResolver;
 import android.content.Context;

@@ -1,4 +1,4 @@
-package me.happylabs.kit;
+package com.lastinitial.kit;
 
 /*
  * Copyright 2012 CodeSlap - Cristian Castiblanco

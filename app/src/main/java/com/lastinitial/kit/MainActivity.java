@@ -1,4 +1,4 @@
-package me.happylabs.kit;
+package com.lastinitial.kit;
 
 import android.app.Activity;
 import android.app.LoaderManager;
@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -28,13 +27,10 @@ import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
-import me.happylabs.kit.app.R;
-
-
 public class MainActivity extends ActionBarActivity implements
         LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static final String DETAILS_DB_ROWID = "me.happylabs.kit.DETAILS_DB_ROWID";
+    public static final String DETAILS_DB_ROWID = "com.lastinitial.kit.DETAILS_DB_ROWID";
 
     public static final int FREQUENCY_DAILY = 0;
     public static final int FREQUENCY_WEEKLY = 1;
@@ -203,9 +199,9 @@ public class MainActivity extends ActionBarActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        boolean result = super.onCreateOptionsMenu(menu);
-        menu.add(0, R.id.run_notifications, 0, R.string.run_notifications);
-        return result;
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
     @Override
@@ -214,11 +210,12 @@ public class MainActivity extends ActionBarActivity implements
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.run_notifications) {
+        if (id == R.id.action_run_notifications) {
             Intent intent = new Intent(this, PeriodicUpdater.class);
             sendBroadcast(intent);
+        } else if (id == R.id.action_about) {
+            Intent intent = new Intent(this, About.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
