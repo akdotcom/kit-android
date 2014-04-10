@@ -73,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:minWidth="175dp"
+        android:minWidth="185dp"
         android:text="@string/button_done"
         android:id="@+id/button"
         android:layout_gravity="center_horizontal"
