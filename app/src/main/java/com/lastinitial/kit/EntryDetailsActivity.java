@@ -276,4 +276,8 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         super.onDestroy();
         mDbHelper.close();
     }
+
+    public void close(View view) {
+        finish();
+    }
 }

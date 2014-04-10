@@ -23,9 +23,7 @@
         android:id="@+id/lastContactInfo"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="wrap_content"
@@ -33,9 +31,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/last_in_touch"
             android:paddingRight="5dp"
-            android:id="@+id/lastDescription"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:id="@+id/lastDescription" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -43,18 +39,14 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold"
             android:text="LAST CONTACT"
-            android:id="@+id/lastContact"
-            android:layout_toRightOf="@+id/nextDescription" />
+            android:id="@+id/lastContact" />
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="10dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true" >
+        android:layout_gravity="center_horizontal">
 
         <TextView
             android:layout_width="wrap_content"
@@ -63,22 +55,33 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/keep_in_touch_every"
             android:paddingRight="10dp"
-            android:id="@+id/kitEvery"
-            android:layout_toRightOf="@+id/nextDescription" />
+            android:id="@+id/kitEvery" />
 
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/fScalarSpinner"
-            android:layout_alignParentTop="true" />
+            android:id="@+id/fScalarSpinner" />
 
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/fTypeSpinner"
-            android:layout_toRightOf="@+id/fScalarSpinner" />
+            android:id="@+id/fTypeSpinner" />
 
     </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:minWidth="175dp"
+        android:text="@string/button_done"
+        android:id="@+id/button"
+        android:layout_gravity="center_horizontal"
+        android:onClick="close"
+        android:padding="0dp"
+        android:paddingTop="0dp"
+        android:clickable="true"
+        android:enabled="true" />
 
     <!--<SeekBar-->
         <!--android:layout_width="match_parent"-->

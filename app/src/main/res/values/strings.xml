@@ -25,6 +25,7 @@
     <string name="about_text2">KIT uses data found on many but not all Android phones. If you have a problem, please send me information about your device and Android version using the feedback button below.</string>
     <string name="button_feedback">Feedback</string>
     <string name="button_rate">Rate on Google Play</string>
+    <string name="button_done">Done</string>
 
     <string-array name="frequency_unit_array">
         <item>day</item>
