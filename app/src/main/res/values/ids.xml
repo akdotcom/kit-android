@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <item type="id" name="button_ok" />
-    <item type="id" name="view_lookup_uri" />
-    <item type="id" name="view_db_rowid" />
-    <item type="id" name="action_run_notifications" />
-    <item type="id" name="action_remove_contact" />
-    <item type="id" name="action_about" />
-</resources>
