@@ -126,6 +126,39 @@ public class LastContactUpdater {
 //        }
 //        callCursor.close();
 //        return lastContacted;
+    }
 
+    /**
+     * Update the lastContact field for a single contact
+     * @return the updated value, if the value has been updated. Otherwise return null.
+     */
+    public Long updateContact(Context context, ContactsDbAdapter contactsDb, long rowId) {
+        Cursor dbCursor = contactsDb.fetchContact(rowId);
+        long dbLastContacted = dbCursor.getLong(
+                dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED));
+        String dbLookupKey = dbCursor.getString(
+                dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LOOKUP_KEY));
+        dbCursor.close();
+
+        ContentResolver resolver = context.getContentResolver();
+        String[] lookupFields = {
+                Contacts.LAST_TIME_CONTACTED,
+        };
+        Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, dbLookupKey);
+        Cursor infoCursor = resolver.query(lookupUri, lookupFields, null, null, null);
+        if (!infoCursor.moveToFirst()) {
+            Log.e("LastContactUpdater", "lookupKey failed to retrieve contact in updateContact");
+            infoCursor.close();
+            return null;
+        }
+
+        int lastContactedIndex = infoCursor.getColumnIndex(Contacts.LAST_TIME_CONTACTED);
+        long infoLastContacted = infoCursor.getLong(lastContactedIndex);
+        infoCursor.close();
+        if (infoLastContacted > dbLastContacted) {
+            contactsDb.updateLastContacted(rowId, infoLastContacted, MainActivity.CONTACT_SYSTEM);
+            return infoLastContacted;
+        }
+        return null;
     }
 }
