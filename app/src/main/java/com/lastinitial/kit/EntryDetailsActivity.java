@@ -166,6 +166,16 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         dbCursor.close();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        LastContactUpdater updater = new LastContactUpdater();
+        Long updatedTime = updater.updateContact(this, mDbHelper, rowId);
+        if (updatedTime != null) {
+            updateLastContactTextView(updatedTime);
+        }
+    }
+
     public void updateLastContactTextView(Long lastContact) {
         TextView tvLastContact = (TextView) findViewById(R.id.lastContact);
         if (lastContact == 0) {
