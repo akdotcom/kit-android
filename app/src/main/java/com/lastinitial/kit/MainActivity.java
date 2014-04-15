@@ -47,6 +47,7 @@ public class MainActivity extends ActionBarActivity implements
     private ResourceCursorAdapter mAdapter;
     private LastContactUpdater mUpdater = new LastContactUpdater();
 
+    public static final int LOW_PRIORITY_TEXT_COLOR = Color.parseColor("#666666");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,12 +136,15 @@ public class MainActivity extends ActionBarActivity implements
                 int[] attributes = { android.R.attr.colorBackground };
                 TypedArray array = getTheme().obtainStyledAttributes(attributes);
                 int colorBackground = array.getColor(0, Color.WHITE);
+                TextView contactName = (TextView) view.findViewById(R.id.contactName);
                 if (nextContact < System.currentTimeMillis()) {
                     view.setBackgroundColor(Color.WHITE);
+                    contactName.setTextColor(Color.BLACK);
                 } else {
                     // Explicitly do this because otherwise reused imageViews sometimes keep their
                     // former color
                     view.setBackgroundColor(colorBackground);
+                    contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
                 }
 
                 view.setTag(R.id.view_lookup_uri, lookupUri);
