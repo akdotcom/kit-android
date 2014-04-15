@@ -274,7 +274,6 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
     }
 
     public void deleteContact() {
-        Log.v("deleteContact", "rowId: " + rowId);
         if (rowId != -1L) {
             mDbHelper.deleteContact(rowId);
         }
