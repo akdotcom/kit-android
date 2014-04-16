@@ -9,10 +9,17 @@ body {
   margin: 1em;
 }
 
+#container {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
 #title {
   color: #222;
   font-size: 2em;
-  font-weight:bold;
+  font-weight:bold;  
 }
 
 .highlight {
@@ -28,12 +35,11 @@ body {
 .product {
   display: inline-block;
   vertical-align: middle;
-  margin: 0 1em;
 }
 
 #products a {
   text-decoration: none;
-  color: #222;
+  color: inherit;
 }
 
 #next {
@@ -45,6 +51,14 @@ body {
 
 #footer-spacer {
   height: 2em;
+}
+
+#footer {
+  opacity: 0.5;
+}
+
+#footer a {
+    color: inherit;
 }
 
 
@@ -73,7 +87,7 @@ body {
 @media screen and (min-width: 768px){
     .rwd-break { display: none; }
     body { margin: 2em; }
-    #products { margin-left: 2em;
+    #products {
                 margin-top: 2em;
                 margin-bottom: 2em;
               }
