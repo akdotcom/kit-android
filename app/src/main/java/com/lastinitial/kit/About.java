@@ -44,7 +44,7 @@ public class About extends Activity {
     public void feedback(View view) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("message/rfc822");
-        intent.putExtra(Intent.EXTRA_EMAIL, "ak@happylabs.me");
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[] {"ak@lastinitial.com"});
         intent.putExtra(Intent.EXTRA_SUBJECT, "KIT Feedback");
         startActivity(intent);
     }
