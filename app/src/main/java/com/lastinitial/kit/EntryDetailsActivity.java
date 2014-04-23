@@ -22,6 +22,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -35,6 +38,12 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.entry_details);
+
+        Tracker t = ((KitApplication) getApplication()).getTracker();
+        t.setScreenName("com.lastinitial.kit.EntryDetailsActivity");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
+
 
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();

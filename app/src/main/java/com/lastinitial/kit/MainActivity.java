@@ -1,6 +1,7 @@
 package com.lastinitial.kit;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.LoaderManager;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -17,6 +18,8 @@ import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.provider.ContactsContract.PhoneLookup;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +29,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
+
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 
 public class MainActivity extends ActionBarActivity implements
         LoaderManager.LoaderCallbacks<Cursor>{
@@ -52,6 +58,11 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Tracker t = ((KitApplication) getApplication()).getTracker();
+        t.setScreenName("com.lastinitial.kit.MainActivity");
+        // Send a screen view.
+        t.send(new HitBuilders.AppViewBuilder().build());
 
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();
@@ -137,14 +148,30 @@ public class MainActivity extends ActionBarActivity implements
                 TypedArray array = getTheme().obtainStyledAttributes(attributes);
                 int colorBackground = array.getColor(0, Color.WHITE);
                 TextView contactName = (TextView) view.findViewById(R.id.contactName);
+                TextView nextTv = (TextView) view.findViewById(R.id.next_value);
+                CharSequence nextText = null;
+                long currentTime = System.currentTimeMillis();
+                if (nextContact > 0) {
+                    nextText = DateUtils.getRelativeTimeSpanString(
+                            nextContact,
+                            currentTime,
+                            DateUtils.DAY_IN_MILLIS);
+                } else {
+                    nextText = "ASAP";
+                }
+
                 if (nextContact < System.currentTimeMillis()) {
                     view.setBackgroundColor(Color.WHITE);
                     contactName.setTextColor(Color.BLACK);
+                    nextTv.setTextColor(Color.BLACK);
+                    nextTv.setText(Html.fromHtml("<b>" + nextText + "</b>"));
                 } else {
                     // Explicitly do this because otherwise reused imageViews sometimes keep their
                     // former color
                     view.setBackgroundColor(colorBackground);
                     contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
+                    nextTv.setTextColor(LOW_PRIORITY_TEXT_COLOR);
+                    nextTv.setText(nextText);
                 }
 
                 view.setTag(R.id.view_lookup_uri, lookupUri);

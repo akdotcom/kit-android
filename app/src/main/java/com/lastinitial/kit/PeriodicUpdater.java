@@ -170,6 +170,8 @@ public class PeriodicUpdater extends BroadcastReceiver {
         }
 
         dbCursor.close();
+
+
     }
 
 
@@ -179,7 +181,7 @@ public class PeriodicUpdater extends BroadcastReceiver {
         alarmIntent = PendingIntent.getBroadcast(context, 0, periodicIntent, 0);
         alarmMgr.setInexactRepeating(
                 AlarmManager.ELAPSED_REALTIME,
-                AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+                AlarmManager.INTERVAL_HALF_HOUR,
                 AlarmManager.INTERVAL_HALF_DAY,
                 alarmIntent);
     }
