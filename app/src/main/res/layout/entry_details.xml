@@ -39,6 +39,7 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold"
             android:text="LAST CONTACT"
+            android:background="@drawable/abc_spinner_ab_default_holo_light"
             android:id="@+id/lastContact" />
     </LinearLayout>
 
@@ -69,6 +70,30 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/nextContactInfo"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/next_in_touch"
+            android:paddingRight="5dp"
+            android:id="@+id/nextDescription" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
+            android:text="NEXT CONTACT"
+            android:background="@drawable/abc_spinner_ab_default_holo_light"
+            android:id="@+id/nextContact" />
+    </LinearLayout>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

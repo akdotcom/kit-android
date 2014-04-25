@@ -262,13 +262,31 @@ public class ContactsDbAdapter {
 
     }
 
+    public boolean updateNextContact(long rowId, Long nextContact) {
+        ContentValues args = new ContentValues();
+        args.put(KEY_NEXT_CONTACT, nextContact);
+        return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+    }
+
     public boolean updateContactFrequency(long rowId, int frequencyType, int frequencyScalar) {
+        Cursor cursor = fetchContact(rowId);
+        int frequencyTypeIndex = cursor.getColumnIndex(KEY_FREQUENCY_TYPE);
+        int frequencyScalarIndex = cursor.getColumnIndex(KEY_FREQUENCY_SCALAR);
+        int lastContactedIndex = cursor.getColumnIndex(KEY_LAST_CONTACTED);
+
+        if (frequencyTypeIndex >= 0 && frequencyScalarIndex >= 0) {
+            int cFrequencyType = cursor.getInt(frequencyTypeIndex);
+            int cFrequencyScalar = cursor.getInt(frequencyScalarIndex);
+            if (frequencyType == cFrequencyType && frequencyScalar == cFrequencyScalar) {
+                // Values haven't changed, no need to update them.
+                return false;
+            }
+        }
+
         ContentValues args = new ContentValues();
         args.put(KEY_FREQUENCY_TYPE, frequencyType);
         args.put(KEY_FREQUENCY_SCALAR, frequencyScalar);
 
-        Cursor cursor = fetchContact(rowId);
-        int lastContactedIndex = cursor.getColumnIndex(KEY_LAST_CONTACTED);
         long lastContacted = cursor.getLong(lastContactedIndex);
         long nextContact = calculateNextContact(lastContacted, frequencyType, frequencyScalar);
         args.put(KEY_NEXT_CONTACT, nextContact);

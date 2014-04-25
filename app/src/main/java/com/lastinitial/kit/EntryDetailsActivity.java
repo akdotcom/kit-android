@@ -48,7 +48,6 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();
 
-
         Intent intent = getIntent();
         rowId = intent.getLongExtra(MainActivity.DETAILS_DB_ROWID, -1L);
 
@@ -163,11 +162,23 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         final long lastContact = dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED));
         updateLastContactTextView(lastContact);
 
-        View lastContactInfo = findViewById(R.id.lastContactInfo);
+        final View lastContactInfo = findViewById(R.id.lastContactInfo);
         lastContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment newFragment = new DatePickerFragment(lastContact);
+                DialogFragment newFragment = new DatePickerFragment(lastContactInfo, lastContact);
+                newFragment.show(getFragmentManager(), "datePicker");
+            }
+        });
+
+        final long nextContact = dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
+        updateNextContactTextView(nextContact);
+
+        final View nextContactInfo = findViewById(R.id.nextContactInfo);
+        nextContactInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogFragment newFragment = new DatePickerFragment(nextContactInfo, nextContact);
                 newFragment.show(getFragmentManager(), "datePicker");
             }
         });
@@ -185,29 +196,49 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         }
     }
 
-    public void updateLastContactTextView(Long lastContact) {
-        TextView tvLastContact = (TextView) findViewById(R.id.lastContact);
-        if (lastContact == 0) {
-            tvLastContact.setText("? (Tap to set)");
+    public void updateTimingTextView(TextView textView, Long newTime) {
+        if (newTime == null || newTime == 0) {
+            textView.setText(R.string.unknown_time);
             return;
         }
         CharSequence lastContactString = DateUtils.getRelativeTimeSpanString(
-                lastContact,
+                newTime,
                 System.currentTimeMillis(),
                 DateUtils.DAY_IN_MILLIS);
-        tvLastContact.setText(lastContactString);
+        textView.setText(lastContactString);
+    }
+
+    public void updateLastContactTextView(Long lastContact) {
+        TextView tvLastContact = (TextView) findViewById(R.id.lastContact);
+        updateTimingTextView(tvLastContact, lastContact);
+    }
+
+    public void updateNextContactTextView(Long nextContact) {
+        TextView tvLastContact = (TextView) findViewById(R.id.nextContact);
+        updateTimingTextView(tvLastContact, nextContact);
     }
 
     public void updateLastContact(long lastContact, int contactType) {
         mDbHelper.updateLastContacted(rowId, lastContact, contactType);
+        Cursor c = mDbHelper.fetchContact(rowId);
+        long nextContact = c.getLong(c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
+        c.close();
         updateLastContactTextView(lastContact);
+        updateNextContactTextView(nextContact);
+    }
+
+    public void updateNextContact(long nextContact) {
+        mDbHelper.updateNextContact(rowId, nextContact);
+        updateNextContactTextView(nextContact);
     }
 
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
         long mInitialTime;
+        View mParentView;
 
-        public DatePickerFragment(long initialTime) {
+        public DatePickerFragment(View textView, long initialTime) {
+            mParentView = textView;
             mInitialTime = initialTime;
         }
 
@@ -231,8 +262,12 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             Log.v("DatePickerFragment", "Date picked");
             Calendar calendar = new GregorianCalendar(year, month, day);
             EntryDetailsActivity activity = (EntryDetailsActivity) getActivity();
-            activity.updateLastContact(
-                    calendar.getTimeInMillis(), MainActivity.CONTACT_TYPE_MANUAL);
+            if (mParentView.getId() == R.id.lastContactInfo) {
+                activity.updateLastContact(
+                        calendar.getTimeInMillis(), MainActivity.CONTACT_TYPE_MANUAL);
+            } else if (mParentView.getId() == R.id.nextContactInfo) {
+                activity.updateNextContact(calendar.getTimeInMillis());
+            }
         }
     }
 
@@ -256,6 +291,9 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             // are off by one.
             mDbHelper.updateContactFrequency(rowId, freqType.getSelectedItemPosition(), i + 1);
         }
+        Cursor c = mDbHelper.fetchContact(rowId);
+        long nextContact = c.getLong(c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
+        updateNextContactTextView(nextContact);
     }
 
     @Override

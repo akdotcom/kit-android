@@ -44,7 +44,7 @@
         android:layout_below="@+id/contactName"
         android:textColor="#666666"
         android:textSize="14sp"
-        android:text="Talk again:" />
+        android:text="@string/next_in_touch" />
     <TextView
         android:id="@+id/next_value"
         android:layout_width="wrap_content"
