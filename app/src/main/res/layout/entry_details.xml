@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            style="@style/OptionText"
             android:text="@string/icon_comments"
             android:textColor="#3366FF"
             android:id="@+id/lastDescription" />
@@ -38,7 +38,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            style="@style/OptionText"
             android:text="LAST CONTACT"
             android:padding="4sp"
             android:background="#EBF0FF"
@@ -49,7 +49,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            style="@style/OptionText"
             android:text="@string/icon_refresh"
             android:textColor="#33CC33"
             android:id="@+id/kitEvery" />
@@ -81,21 +81,23 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            style="@style/OptionText"
             android:text="@string/icon_clock"
             android:textColor="#FF5050"
             android:id="@+id/nextDescription" />
         <!--android:paddingRight="5dp"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="NEXT CONTACT"
+            style="@style/OptionText"
             android:background="#FFEEEE"
             android:padding="4sp"
             android:id="@+id/nextContact" />
         <!--android:background="@drawable/abc_spinner_ab_default_holo_light"-->
+        <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
 
     </GridLayout>
 
@@ -106,6 +108,7 @@
         android:minWidth="185dp"
         android:text="@string/icon_check"
         android:id="@+id/button"
+        style="@style/OptionText"
         android:layout_gravity="center_horizontal"
         android:onClick="close"
         android:padding="0dp"
