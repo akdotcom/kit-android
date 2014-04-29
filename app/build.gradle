@@ -13,9 +13,9 @@ android {
     signingConfigs {
         release {
             storeFile file("lastinitial-key.keystore")
-            storePassword System.console().readLine("\n\$ Enter keystore password: ")
+            storePassword "FAKE_PASSWORD"
             keyAlias "lastinitial"
-            keyPassword System.console().readLine("\n\$ Enter key password: ")
+            keyPassword "FAKE_PASSWORD"
         }
     }
     buildTypes {
@@ -24,6 +24,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
         }
+        debug {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
     }
 }
 
@@ -31,4 +35,20 @@ dependencies {
     compile 'com.android.support:appcompat-v7:+'
     compile 'com.google.android.gms:play-services:4.3.23'
     compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+task askForPasswords << {
+    // Must create String because System.readPassword() returns char[]
+    // (and assigning that below fails silently)
+    def storePw = new String(System.console().readPassword("\nKeystore password: "))
+    def keyPw  = new String(System.console().readPassword("\nKey password: "))
+
+    android.signingConfigs.release.storePassword = storePw
+    android.signingConfigs.release.keyPassword = keyPw
+}
+
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("packageRelease")) {
+        theTask.dependsOn "askForPasswords"
+    }
 }
