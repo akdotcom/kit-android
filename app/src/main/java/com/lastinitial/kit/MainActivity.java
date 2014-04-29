@@ -94,10 +94,8 @@ public class MainActivity extends ActionBarActivity implements
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
-                Intent intent = new Intent(getApplicationContext(), EntryDetailsActivity.class);
-                intent.setData(contactUri);
-                intent.setAction(Intent.ACTION_MAIN);
-                startActivity(intent);
+                ContactsContract.QuickContact.showQuickContact(
+                        adapterView.getContext(), view, contactUri, ContactsContract.QuickContact.MODE_LARGE, null);
             }
         });
 
@@ -181,6 +179,20 @@ public class MainActivity extends ActionBarActivity implements
                 final int dbIdIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID);
                 final long dbId = cursor.getLong(dbIdIndex);
                 view.setTag(R.id.view_db_rowid, dbId);
+
+                ImageView ivContactOptions = (ImageView) view.findViewById(R.id.contactOptions);
+                ivContactOptions.setTag(R.id.view_lookup_uri, lookupUri);
+                ivContactOptions.setTag(R.id.view_db_rowid, dbId);
+                ivContactOptions.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
+                        Intent intent = new Intent(getApplicationContext(), EntryDetailsActivity.class);
+                        intent.setData(contactUri);
+                        intent.setAction(Intent.ACTION_MAIN);
+                        startActivity(intent);
+                    }
+                });
             }
         };
         listView.setAdapter(mAdapter);

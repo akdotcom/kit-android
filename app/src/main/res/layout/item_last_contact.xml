@@ -20,10 +20,10 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-    <!--android:minHeight="?android:attr/listPreferredItemHeight"-->
-    <!--android:minWidth="?android:attr/listPreferredItemHeight"-->
+
     <RelativeLayout
         android:layout_toRightOf="@+id/quickbadge"
+        android:layout_toLeftOf="@+id/contactOptions"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical">
@@ -67,38 +67,25 @@
 
         <!--android:textAppearance="?android:attr/textAppearanceLarge"-->
     </RelativeLayout>
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
-        <!--android:text="Last in touch:"-->
-        <!--android:id="@+id/description"-->
+    <!--<View-->
+        <!--android:layout_width="1dp"-->
+        <!--android:layout_height="64dp"-->
+        <!--android:id="@+id/seperater"-->
         <!--android:gravity="center_vertical"-->
-        <!--android:paddingStart="?android:attr/listPreferredItemPaddingStart"-->
-        <!--android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"-->
-        <!--android:layout_below="@+id/contactName"-->
-        <!--android:layout_toRightOf="@+id/quickbadge" />-->
-
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
-        <!--android:text="Relative Time"-->
-        <!--android:id="@+id/contactTime"-->
-        <!--android:layout_alignTop="@+id/description"-->
-        <!--android:layout_toRightOf="@+id/description" />-->
-
-    <!--<ImageView-->
-        <!--android:layout_width="?android:attr/listPreferredItemHeight"-->
-        <!--android:layout_height="?android:attr/listPreferredItemHeight"-->
-        <!--android:id="@+id/contactOptions"-->
-        <!--android:scaleType="centerInside"-->
-        <!--android:src="@drawable/ic_action_overflow"-->
-        <!--android:gravity="center_vertical"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_marginRight="?android:attr/listPreferredItemPaddingStart"-->
-        <!--android:layout_marginTop="?android:attr/listPreferredItemPaddingStart"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignParentEnd="true" />-->
+        <!--android:layout_toLeftOf="@+id/contactOptions"-->
+        <!--android:layout_alignTop="@+id/contactOptions"-->
+        <!--android:background="#CCCCCC" />-->
+    <ImageView
+        android:layout_width="?android:attr/listPreferredItemHeight"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:id="@+id/contactOptions"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_action_overflow"
+        android:gravity="center_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+    <!--android:layout_marginTop="?android:attr/listPreferredItemPaddingStart"-->
 
 </RelativeLayout>
