@@ -156,10 +156,8 @@ public class MainActivity extends ActionBarActivity implements
                 CharSequence nextText = null;
                 long currentTime = System.currentTimeMillis();
                 if (nextContact > 0) {
-                    nextText = DateUtils.getRelativeTimeSpanString(
-                            nextContact,
-                            currentTime,
-                            DateUtils.DAY_IN_MILLIS);
+                    nextText =
+                            RelativeDateUtils.getRelativeTimeSpanString(nextContact, currentTime);
                 } else {
                     nextText = "ASAP";
                 }

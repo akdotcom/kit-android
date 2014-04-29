@@ -5,14 +5,10 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,6 +34,9 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
     private String lookupKey = null;
     private long rowId = -1L;
 
+    private ArrayAdapter<CharSequence> mTypeAdapter = null;
+    private ArrayAdapter<CharSequence> mTypePluralAdapter = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +46,14 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         t.setScreenName("com.lastinitial.kit.EntryDetailsActivity");
         // Send a screen view.
         t.send(new HitBuilders.AppViewBuilder().build());
+
+        mTypeAdapter = ArrayAdapter.createFromResource(this,
+                R.array.frequency_unit_array, R.layout.date_spinner_item);
+        mTypePluralAdapter = ArrayAdapter.createFromResource(this,
+                R.array.frequency_unit_array_plural, R.layout.date_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        mTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mTypePluralAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         TextView tvLastContactIcon = (TextView) findViewById(R.id.lastDescription);
         TextView tvFrequencyIcon = (TextView) findViewById(R.id.kitEvery);
@@ -139,12 +146,12 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         fScalarSpinner.setOnItemSelectedListener(this);
 
         Spinner fTypeSpinner = (Spinner) findViewById(R.id.fTypeSpinner);
-        ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.frequency_unit_array, R.layout.date_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        if (freqScalar > 1) {
+            fTypeSpinner.setAdapter(mTypePluralAdapter);
+        } else {
+            fTypeSpinner.setAdapter(mTypeAdapter);
+        }
         // Apply the adapter to the spinner
-        fTypeSpinner.setAdapter(typeAdapter);
         fTypeSpinner.setSelection(freqType);
         fTypeSpinner.setOnItemSelectedListener(this);
 
@@ -178,7 +185,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         lastContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment newFragment = new DatePickerFragment(lastContactInfo, lastContact);
+                DialogFragment newFragment = new DatePickerFragment(lastContactInfo);
                 newFragment.show(getFragmentManager(), "datePicker");
             }
         });
@@ -190,7 +197,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         nextContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment newFragment = new DatePickerFragment(nextContactInfo, nextContact);
+                DialogFragment newFragment = new DatePickerFragment(nextContactInfo);
                 newFragment.show(getFragmentManager(), "datePicker");
             }
         });
@@ -213,11 +220,11 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             textView.setText(R.string.unknown_time);
             return;
         }
-        CharSequence lastContactString = DateUtils.getRelativeTimeSpanString(
-                newTime,
-                System.currentTimeMillis(),
-                DateUtils.DAY_IN_MILLIS);
+
+        CharSequence lastContactString =
+                RelativeDateUtils.getRelativeTimeSpanString(newTime, System.currentTimeMillis());
         textView.setText(lastContactString);
+        textView.setTag(R.id.view_time_millis, new Long(newTime));
     }
 
     public void updateLastContactTextView(Long lastContact) {
@@ -246,20 +253,19 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
 
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
-        long mInitialTime;
         View mParentView;
 
-        public DatePickerFragment(View textView, long initialTime) {
+        public DatePickerFragment(View textView) {
             mParentView = textView;
-            mInitialTime = initialTime;
         }
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
             Calendar c = Calendar.getInstance();
-            if (mInitialTime != 0) {
-                c.setTimeInMillis(mInitialTime);
+            Object tagTime = mParentView.getTag(R.id.view_time_millis);
+            if (tagTime != null) {
+                c.setTimeInMillis((Long)tagTime);
             }
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
@@ -280,6 +286,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             } else if (mParentView.getId() == R.id.nextContact) {
                 activity.updateNextContact(calendar.getTimeInMillis());
             }
+            mParentView.setTag(R.id.view_time_millis, new Long(calendar.getTimeInMillis()));
         }
     }
 
@@ -287,6 +294,9 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        if (view == null) {
+            return;
+        }
         // Update to the frequency type
         if (R.id.fTypeSpinner == adapterView.getId()) {
             // Get the complimentary value
@@ -302,6 +312,14 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             // Type constant values correspond to their position in the selector. Scalar values
             // are off by one.
             mDbHelper.updateContactFrequency(rowId, freqType.getSelectedItemPosition(), i + 1);
+
+            // Update the type adapter to show the right list of words based on the new
+            // value for the scalar.
+//            if (i == 0) {
+//                freqType.setAdapter(mTypeAdapter);
+//            } else {
+//                freqType.setAdapter(mTypePluralAdapter);
+//            }
         }
         Cursor c = mDbHelper.fetchContact(rowId);
         long nextContact = c.getLong(c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
