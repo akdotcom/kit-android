@@ -14,92 +14,97 @@
         android:layout_height="wrap_content"
         android:minHeight="175dp"
         android:minWidth="175dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="10dp"
         android:layout_gravity="center_horizontal"
         android:id="@+id/contactImage" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/lastContactInfo"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/last_in_touch"
-            android:paddingRight="5dp"
-            android:id="@+id/lastDescription" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold"
-            android:text="LAST CONTACT"
-            android:background="@drawable/abc_spinner_ab_default_holo_light"
-            android:id="@+id/lastContact" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
+    <GridLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:rowCount="3"
+        android:useDefaultMargins="true"
+        android:columnCount="2">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/icon_comments"
+            android:textColor="#3366FF"
+            android:id="@+id/lastDescription" />
+        <!--android:paddingRight="5dp"-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="LAST CONTACT"
+            android:padding="4sp"
+            android:background="#EBF0FF"
+            android:id="@+id/lastContact" />
+        <!--android:background="@drawable/abc_spinner_ab_default_holo_light"-->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/keep_in_touch_every"
-            android:paddingRight="10dp"
+            android:text="@string/icon_refresh"
+            android:textColor="#33CC33"
             android:id="@+id/kitEvery" />
+        <!--android:paddingRight="10dp"-->
 
-        <Spinner
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/fScalarSpinner" />
+            android:layout_gravity="left">
 
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/fTypeSpinner" />
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#EBFAEB"
+                android:id="@+id/fScalarSpinner" />
+            <View
+                android:layout_width="4sp"
+                android:layout_height="0sp"
+                android:id="@+id/seperater" />
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#EBFAEB"
+                android:id="@+id/fTypeSpinner" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:id="@+id/nextContactInfo"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/next_in_touch"
-            android:paddingRight="5dp"
+            android:text="@string/icon_clock"
+            android:textColor="#FF5050"
             android:id="@+id/nextDescription" />
+        <!--android:paddingRight="5dp"-->
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold"
             android:text="NEXT CONTACT"
-            android:background="@drawable/abc_spinner_ab_default_holo_light"
+            android:background="#FFEEEE"
+            android:padding="4sp"
             android:id="@+id/nextContact" />
-    </LinearLayout>
+        <!--android:background="@drawable/abc_spinner_ab_default_holo_light"-->
+
+    </GridLayout>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:minWidth="185dp"
-        android:text="@string/button_done"
+        android:text="@string/icon_check"
         android:id="@+id/button"
         android:layout_gravity="center_horizontal"
         android:onClick="close"

@@ -5,10 +5,13 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -16,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.QuickContactBadge;
 import android.widget.Spinner;
@@ -44,6 +48,14 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         // Send a screen view.
         t.send(new HitBuilders.AppViewBuilder().build());
 
+        TextView tvLastContactIcon = (TextView) findViewById(R.id.lastDescription);
+        TextView tvFrequencyIcon = (TextView) findViewById(R.id.kitEvery);
+        TextView tvNextContactIcon = (TextView) findViewById(R.id.nextDescription);
+        Button bDoneIcon = (Button) findViewById(R.id.button);
+        tvLastContactIcon.setTypeface(FontUtils.getFontAwesome(this));
+        tvFrequencyIcon.setTypeface(FontUtils.getFontAwesome(this));
+        tvNextContactIcon.setTypeface(FontUtils.getFontAwesome(this));
+        bDoneIcon.setTypeface(FontUtils.getFontAwesome(this));
 
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();
@@ -118,7 +130,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
 
         Spinner fScalarSpinner = (Spinner) findViewById(R.id.fScalarSpinner);
         ArrayAdapter<CharSequence> scalarAdapter = ArrayAdapter.createFromResource(this,
-                R.array.number_array, android.R.layout.simple_spinner_item);
+                R.array.number_array, R.layout.date_spinner_item);
         // Specify the layout to use when the list of choices appears
         scalarAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -128,7 +140,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
 
         Spinner fTypeSpinner = (Spinner) findViewById(R.id.fTypeSpinner);
         ArrayAdapter<CharSequence> typeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.frequency_unit_array, android.R.layout.simple_spinner_item);
+                R.array.frequency_unit_array, R.layout.date_spinner_item);
         // Specify the layout to use when the list of choices appears
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -162,7 +174,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         final long lastContact = dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED));
         updateLastContactTextView(lastContact);
 
-        final View lastContactInfo = findViewById(R.id.lastContactInfo);
+        final View lastContactInfo = findViewById(R.id.lastContact);
         lastContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -174,7 +186,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         final long nextContact = dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
         updateNextContactTextView(nextContact);
 
-        final View nextContactInfo = findViewById(R.id.nextContactInfo);
+        final View nextContactInfo = findViewById(R.id.nextContact);
         nextContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -262,10 +274,10 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             Log.v("DatePickerFragment", "Date picked");
             Calendar calendar = new GregorianCalendar(year, month, day);
             EntryDetailsActivity activity = (EntryDetailsActivity) getActivity();
-            if (mParentView.getId() == R.id.lastContactInfo) {
+            if (mParentView.getId() == R.id.lastContact) {
                 activity.updateLastContact(
                         calendar.getTimeInMillis(), MainActivity.CONTACT_TYPE_MANUAL);
-            } else if (mParentView.getId() == R.id.nextContactInfo) {
+            } else if (mParentView.getId() == R.id.nextContact) {
                 activity.updateNextContact(calendar.getTimeInMillis());
             }
         }

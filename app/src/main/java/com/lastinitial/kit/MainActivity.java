@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -149,6 +150,9 @@ public class MainActivity extends ActionBarActivity implements
                 int colorBackground = array.getColor(0, Color.WHITE);
                 TextView contactName = (TextView) view.findViewById(R.id.contactName);
                 TextView nextTv = (TextView) view.findViewById(R.id.next_value);
+                TextView clockIcon = (TextView) view.findViewById(R.id.next_description);
+                clockIcon.setTypeface(FontUtils.getFontAwesome(context));
+
                 CharSequence nextText = null;
                 long currentTime = System.currentTimeMillis();
                 if (nextContact > 0) {
@@ -163,14 +167,15 @@ public class MainActivity extends ActionBarActivity implements
                 if (nextContact < System.currentTimeMillis()) {
                     view.setBackgroundColor(Color.WHITE);
                     contactName.setTextColor(Color.BLACK);
-                    nextTv.setTextColor(Color.BLACK);
-                    nextTv.setText(Html.fromHtml("<b>" + nextText + "</b>"));
+                    nextTv.setVisibility(View.GONE);
+                    clockIcon.setVisibility(View.GONE);
                 } else {
                     // Explicitly do this because otherwise reused imageViews sometimes keep their
                     // former color
                     view.setBackgroundColor(colorBackground);
                     contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
-                    nextTv.setTextColor(LOW_PRIORITY_TEXT_COLOR);
+                    nextTv.setVisibility(View.VISIBLE);
+                    clockIcon.setVisibility(View.VISIBLE);
                     nextTv.setText(nextText);
                 }
 
