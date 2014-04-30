@@ -43,10 +43,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.entry_details);
 
-        Tracker t = ((KitApplication) getApplication()).getTracker();
-        t.setScreenName("com.lastinitial.kit.EntryDetailsActivity");
-        // Send a screen view.
-        t.send(new HitBuilders.AppViewBuilder().build());
+        AnalyticsUtil.logScreenImpression(this, "com.lastinitial.kit.EntryDetailsActivity");
 
         mTypeAdapter = ArrayAdapter.createFromResource(this,
                 R.array.frequency_unit_array, R.layout.date_spinner_item);
@@ -213,6 +210,9 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         Long updatedTime = updater.updateContact(this, mDbHelper, rowId);
         if (updatedTime != null) {
             updateLastContactTextView(updatedTime);
+            Cursor c = mDbHelper.fetchContact(rowId);
+            int nextContactIndex = c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
+            updateNextContactTextView(c.getLong(nextContactIndex));
         }
     }
 

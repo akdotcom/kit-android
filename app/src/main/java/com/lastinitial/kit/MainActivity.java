@@ -61,10 +61,7 @@ public class MainActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Tracker t = ((KitApplication) getApplication()).getTracker();
-        t.setScreenName("com.lastinitial.kit.MainActivity");
-        // Send a screen view.
-        t.send(new HitBuilders.AppViewBuilder().build());
+        AnalyticsUtil.logScreenImpression(this, "com.lastinitial.kit.MainActivity");
 
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();
