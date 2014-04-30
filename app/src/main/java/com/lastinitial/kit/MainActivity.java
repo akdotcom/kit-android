@@ -8,6 +8,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
@@ -247,6 +248,11 @@ public class MainActivity extends ActionBarActivity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        boolean isRelease = (0 == (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
+        if (isRelease) {
+            MenuItem notifications = menu.findItem(R.id.action_run_notifications);
+            notifications.setVisible(false);
+        }
         return true;
     }
 
