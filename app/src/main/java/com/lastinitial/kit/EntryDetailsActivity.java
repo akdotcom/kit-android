@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -218,7 +219,10 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
     public void updateTimingTextView(TextView textView, Long newTime) {
         if (newTime == null || newTime == 0) {
             textView.setText(R.string.unknown_time);
+            textView.setGravity(Gravity.CENTER);
             return;
+        } else {
+            textView.setGravity(Gravity.NO_GRAVITY);
         }
 
         CharSequence lastContactString =

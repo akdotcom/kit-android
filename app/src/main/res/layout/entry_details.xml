@@ -39,6 +39,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="100dp"
             style="@style/OptionText"
             android:text="LAST CONTACT"
             android:padding="4sp"
@@ -92,6 +93,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="100dp"
             android:text="NEXT CONTACT"
             style="@style/OptionText"
             android:background="#FFEEEE"
