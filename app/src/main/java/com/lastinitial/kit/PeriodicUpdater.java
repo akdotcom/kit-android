@@ -20,6 +20,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by ak on 3/31/14.
@@ -56,25 +57,20 @@ public class PeriodicUpdater extends BroadcastReceiver {
             return;
         }
 
-        int numNotifications = 0;
         ContentResolver resolver = context.getContentResolver();
         int rowIdIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID);
         int lookupKeyIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LOOKUP_KEY);
         int nextContactIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
         int lastContactedIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED);
 
-        Resources res = context.getResources();
-        int iconHeight = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
-        int iconWidth = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
-
         List<String> names = new LinkedList<String>();
+        List<Uri> photos = new LinkedList<Uri>();
+        List<String> keys = new LinkedList<String>();
 
         Notification.Builder notificationBuilder = new Notification.Builder(context)
                 .setSmallIcon(R.drawable.notification_icon)
                 .setAutoCancel(true)
                 .setPriority(Notification.PRIORITY_LOW);
-
-        boolean largeImageSet = false;
 
         while (dbCursor.moveToNext()) {
             long nextContact = dbCursor.getLong(nextContactIndex);
@@ -82,43 +78,34 @@ public class PeriodicUpdater extends BroadcastReceiver {
                 String lookupKey = dbCursor.getString(lookupKeyIndex);
                 Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
                 String[] lookupFields = {
+                        Contacts.LOOKUP_KEY,
                         Contacts.DISPLAY_NAME,
                         Contacts.PHOTO_URI,
                 };
                 Cursor c = resolver.query(lookupUri, lookupFields, null, null, null);
-                if (c != null && c.moveToFirst()) {
-                    numNotifications++;
-                }
-                else {
+                if (c == null || !c.moveToFirst()) {
                     Log.e(TAG, "Reminder requested for missing contact. Lookup key: " + lookupKey);
                     return;
                 }
+
                 String photoUriString = c.getString(c.getColumnIndex(Contacts.PHOTO_URI));
-                if (!largeImageSet && photoUriString != null) {
-                    Uri imageUri = Uri.parse(photoUriString);
-                    try {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(
-                                context.getContentResolver(), imageUri);
-                        bitmap = Bitmap.createScaledBitmap(bitmap, iconWidth, iconHeight, false);
-                        notificationBuilder.setLargeIcon(bitmap);
-                        largeImageSet = true;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if (photoUriString != null) {
+                    photos.add(Uri.parse(photoUriString));
+                } else {
+                    photos.add(null);
                 }
                 names.add(c.getString(c.getColumnIndex(Contacts.DISPLAY_NAME)));
+                keys.add(c.getString(c.getColumnIndex(Contacts.LOOKUP_KEY)));
+
                 c.close();
             } else {
                 // Results are sorted by nextContact time descending, so we can stop iterating
                 break;
             }
         }
-        if (!largeImageSet) {
-            // TODO(ak): do something better here?
-        }
 
-        if (numNotifications == 1) {
-            notificationBuilder.setContentTitle("KIT: " + names.get(0));
+        if (keys.size() == 1) {
+            notificationBuilder.setContentTitle("Stitch: " + names.get(0));
             // Contacts were returned in order of nextContact descending, so if there's only one
             // person to notify on, it's the first contact in the list.
             dbCursor.moveToFirst();
@@ -128,10 +115,13 @@ public class PeriodicUpdater extends BroadcastReceiver {
                 durationDescription = context.getString(R.string.its_been_a_while);
             } else {
                 durationDescription = context.getString(R.string.you_last_talked) + " ";
-                durationDescription += DateUtils.getRelativeTimeSpanString(
-                        lastContacted, System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS);
+                durationDescription += RelativeDateUtils.getRelativeTimeSpanString(
+                        lastContacted, System.currentTimeMillis());
             }
             notificationBuilder.setContentText(durationDescription);
+            if (photos.get(0) != null) {
+                setNotificationImage(context, photos.get(0), notificationBuilder);
+            }
 
             String lookupKey = dbCursor.getString(lookupKeyIndex);
             long rowId = dbCursor.getLong(rowIdIndex);
@@ -146,18 +136,24 @@ public class PeriodicUpdater extends BroadcastReceiver {
             Notification notification = notificationBuilder.build();
             notificationManager.notify(0, notification);
 
-        } else if (numNotifications > 1) {
-            notificationBuilder.setContentTitle(context.getString(R.string.keep_in_touch));
+        } else if (keys.size() > 1) {
+            notificationBuilder.setContentTitle(context.getString(R.string.stay_in_touch));
+
+            int index = new Random().nextInt(keys.size());
 
             // TODO(ak): Think about how to localize this.
             String contentText = "with ";
-            if (numNotifications == 2) {
-                contentText += names.get(0) + " and " + names.get(1);
+            if (keys.size() == 2) {
+                contentText += names.get(index) + " and " + names.get((index + 1) % 2);
             } else {
-                contentText += names.get(0) + " and " + (numNotifications-1) + " others";
+                contentText += names.get(index) + " and " + (keys.size()-1) + " others";
             }
             notificationBuilder.setContentText(contentText);
-            notificationBuilder.setNumber(numNotifications);
+            notificationBuilder.setNumber(keys.size());
+
+            if (photos.get(index) != null) {
+                setNotificationImage(context, photos.get(index), notificationBuilder);
+            }
 
             Intent intent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
@@ -174,6 +170,23 @@ public class PeriodicUpdater extends BroadcastReceiver {
 
     }
 
+    protected void setNotificationImage(Context context,
+                                        Uri imageUri,
+                                        Notification.Builder notificationBuilder) {
+        Resources res = context.getResources();
+        int iconHeight = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+        int iconWidth = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
+
+        try {
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(
+                    context.getContentResolver(), imageUri);
+            bitmap = Bitmap.createScaledBitmap(bitmap, iconWidth, iconHeight, false);
+            notificationBuilder.setLargeIcon(bitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     protected void registerAlarmService(Context context) {
         alarmMgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
