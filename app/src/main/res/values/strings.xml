@@ -12,10 +12,10 @@
     <string name="menu_insert">Add Contact</string>
     <string name="menu_remove">Remove</string>
     <string name="run_notifications">Run Notifications</string>
-    <string name="last_in_touch">Last in touch:</string>
-    <string name="next_in_touch">Talk again:</string>
+    <string name="last_in_touch">Last talked</string>
+    <string name="next_in_touch">Talk again</string>
     <string name="unknown_time">\?</string>
-    <string name="keep_in_touch_every">Keep in touch every:</string>
+    <string name="keep_in_touch_every">Talk every</string>
     <string name="add_contact">Add Contact</string>
     <string name="its_been_a_while">It\'s been a while since you last talked.</string>
     <string name="you_last_talked">You last talked</string>

@@ -23,9 +23,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -53,9 +50,9 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         mTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTypePluralAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        TextView tvLastContactIcon = (TextView) findViewById(R.id.lastDescription);
-        TextView tvFrequencyIcon = (TextView) findViewById(R.id.kitEvery);
-        TextView tvNextContactIcon = (TextView) findViewById(R.id.nextDescription);
+        TextView tvLastContactIcon = (TextView) findViewById(R.id.lastContactIcon);
+        TextView tvFrequencyIcon = (TextView) findViewById(R.id.kitEveryIcon);
+        TextView tvNextContactIcon = (TextView) findViewById(R.id.nextDescriptionIcon);
         Button bDoneIcon = (Button) findViewById(R.id.button);
         tvLastContactIcon.setTypeface(FontUtils.getFontAwesome(this));
         tvFrequencyIcon.setTypeface(FontUtils.getFontAwesome(this));
