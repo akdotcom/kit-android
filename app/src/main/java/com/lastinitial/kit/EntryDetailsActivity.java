@@ -316,15 +316,8 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             // Type constant values correspond to their position in the selector. Scalar values
             // are off by one.
             mDbHelper.updateContactFrequency(rowId, freqType.getSelectedItemPosition(), i + 1);
-
-            // Update the type adapter to show the right list of words based on the new
-            // value for the scalar.
-//            if (i == 0) {
-//                freqType.setAdapter(mTypeAdapter);
-//            } else {
-//                freqType.setAdapter(mTypePluralAdapter);
-//            }
         }
+
         Cursor c = mDbHelper.fetchContact(rowId);
         long nextContact = c.getLong(c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
         updateNextContactTextView(nextContact);

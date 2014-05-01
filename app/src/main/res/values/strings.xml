@@ -28,6 +28,7 @@
     <string name="button_feedback">Send an e-mail</string>
     <string name="button_rate">Rate on Google Play</string>
     <string name="button_done">Done</string>
+    <string name="notification_snooze">Snooze</string>
     <string name="icon_clock">&#xf017;</string>
     <string name="icon_refresh">&#xf021;</string>
     <string name="icon_comments">&#xf086;</string>

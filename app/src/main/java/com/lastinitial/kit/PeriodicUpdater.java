@@ -14,7 +14,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.ContactsContract.Contacts;
 import android.provider.MediaStore;
-import android.text.format.DateUtils;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.Random;
  * Created by ak on 3/31/14.
  */
 public class PeriodicUpdater extends BroadcastReceiver {
-    private static String TAG = "PeriodicUpdater";
+    private static final String TAG = "PeriodicUpdater";
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
 
@@ -65,7 +65,7 @@ public class PeriodicUpdater extends BroadcastReceiver {
 
         List<String> names = new LinkedList<String>();
         List<Uri> photos = new LinkedList<Uri>();
-        List<String> keys = new LinkedList<String>();
+        List<Long> ids = new LinkedList<Long>();
 
         Notification.Builder notificationBuilder = new Notification.Builder(context)
                 .setSmallIcon(R.drawable.notification_icon)
@@ -95,7 +95,7 @@ public class PeriodicUpdater extends BroadcastReceiver {
                     photos.add(null);
                 }
                 names.add(c.getString(c.getColumnIndex(Contacts.DISPLAY_NAME)));
-                keys.add(c.getString(c.getColumnIndex(Contacts.LOOKUP_KEY)));
+                ids.add(dbCursor.getLong(rowIdIndex));
 
                 c.close();
             } else {
@@ -104,7 +104,7 @@ public class PeriodicUpdater extends BroadcastReceiver {
             }
         }
 
-        if (keys.size() == 1) {
+        if (ids.size() == 1) {
             notificationBuilder.setContentTitle("Stitch: " + names.get(0));
             // Contacts were returned in order of nextContact descending, so if there's only one
             // person to notify on, it's the first contact in the list.
@@ -130,39 +130,67 @@ public class PeriodicUpdater extends BroadcastReceiver {
             intent.setData(uri);
             intent.putExtra(MainActivity.DETAILS_DB_ROWID, rowId);
             intent.setAction(Intent.ACTION_MAIN);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            PendingIntent pendingIntent =
+                    PendingIntent.getActivity(
+                            context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             notificationBuilder.setContentIntent(pendingIntent);
+
+            Intent snoozeIntent = new Intent(context, SnoozeUtil.class);
+            snoozeIntent.setAction(SnoozeUtil.ACTION_SNOOZE);
+            snoozeIntent.putExtra(MainActivity.DETAILS_DB_ROWID, rowId);
+            PendingIntent snoozePIntent =
+                    PendingIntent.getService(
+                            context, 0, snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            String snooze = context.getResources().getString(R.string.notification_snooze);
+            notificationBuilder.addAction(
+                    R.drawable.clock_notification_icon, snooze, snoozePIntent);
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(0, notification);
 
-        } else if (keys.size() > 1) {
+        } else if (ids.size() > 1) {
             notificationBuilder.setContentTitle(context.getString(R.string.stay_in_touch));
 
-            int index = new Random().nextInt(keys.size());
+            int index = new Random().nextInt(ids.size());
 
             // TODO(ak): Think about how to localize this.
             String contentText = "with ";
-            if (keys.size() == 2) {
+            if (ids.size() == 2) {
                 contentText += names.get(index) + " and " + names.get((index + 1) % 2);
             } else {
-                contentText += names.get(index) + " and " + (keys.size()-1) + " others";
+                contentText += names.get(index) + " and " + (ids.size()-1) + " others";
             }
             notificationBuilder.setContentText(contentText);
-            notificationBuilder.setNumber(keys.size());
+            notificationBuilder.setNumber(ids.size());
 
             if (photos.get(index) != null) {
                 setNotificationImage(context, photos.get(index), notificationBuilder);
             }
 
             Intent intent = new Intent(context, MainActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+            PendingIntent pendingIntent =
+                    PendingIntent.getActivity(
+                            context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             notificationBuilder.setContentIntent(pendingIntent);
+
+            // Add snooze action button.
+            Intent snoozeIntent = new Intent(context, SnoozeUtil.class);
+            snoozeIntent.setAction(SnoozeUtil.ACTION_SNOOZE);
+            snoozeIntent.putExtra(MainActivity.DETAILS_DB_ROWID, ids.get(index));
+            PendingIntent snoozePIntent =
+                    PendingIntent.getService(
+                            context, 0, snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            String snooze = context.getResources().getString(R.string.notification_snooze);
+            String actionText = snooze + " " + names.get(index);
+            notificationBuilder.addAction(
+                    R.drawable.clock_notification_icon, actionText, snoozePIntent);
 
             Notification notification = notificationBuilder.build();
             notificationManager.notify(0, notification);
         } else {
-            // No notifications to be sent
+            // No notifications to be sent. Cancel this notification in case there's somehow one
+            // lingering.
+            notificationManager.cancel(0);
         }
 
         dbCursor.close();
