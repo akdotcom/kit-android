@@ -6,6 +6,12 @@
     android:focusable="false"
     android:focusableInTouchMode="false">
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:id="@+id/images"
+        android:focusable="false"
+        android:focusableInTouchMode="false" >
     <ImageView
         android:id="@+id/quickbadge"
         android:layout_height="64dp"
@@ -21,23 +27,27 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <RelativeLayout
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_toRightOf="@+id/quickbadge"
+        android:layout_marginRight="6sp"
+        android:gravity="center_vertical"
+        android:visibility="gone"
+        android:text="@string/icon_clock"
+        android:textSize="20sp"
+        android:id="@+id/alarmIcon"
+        android:textColor="#FF5050" />
+    </RelativeLayout>
+    <!--android:paddingTop="1sp"-->
+
+    <RelativeLayout
+        android:layout_toRightOf="@+id/images"
         android:layout_toLeftOf="@+id/contactOptions"
+        android:id="@+id/contactText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/contactName"
-            android:visibility="gone"
-            android:layout_marginRight="6sp"
-            android:text="@string/icon_clock"
-            android:textSize="20sp"
-            android:id="@+id/alarmIcon"
-            android:textColor="#FF5050" />
 
         <TextView
         android:layout_width="wrap_content"
@@ -62,19 +72,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/next_value"
-        android:textColor="#FF9696"
-        android:textSize="14sp"
+        android:textColor="#999999"
+        android:textSize="12sp"
         android:text="@string/icon_clock" />
-        <!--android:layout_below="@+id/contactName"-->
+        <!--android:textColor="#FF9696"-->
+
     <TextView
         android:id="@+id/next_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/contactName"
         android:layout_toRightOf="@+id/next_description"
-        android:textSize="14sp"
-        android:layout_marginLeft="4sp"
-        android:textColor="#666666"
+        android:textSize="12sp"
+        android:layout_marginLeft="3sp"
+        android:textColor="#999999"
         android:text="NEXT_DATE" />
 
         <!--android:textAppearance="?android:attr/textAppearanceLarge"-->

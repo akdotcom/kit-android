@@ -152,6 +152,8 @@ public class MainActivity extends ActionBarActivity implements
                 TextView nextTv = (TextView) view.findViewById(R.id.next_value);
                 TextView clockIcon = (TextView) view.findViewById(R.id.next_description);
                 clockIcon.setTypeface(FontUtils.getFontAwesome(context));
+                TextView alarmIcon = (TextView) view.findViewById(R.id.alarmIcon);
+                alarmIcon.setTypeface(FontUtils.getFontAwesome(getApplicationContext()));
 
                 CharSequence nextText = null;
                 long currentTime = System.currentTimeMillis();
@@ -165,15 +167,7 @@ public class MainActivity extends ActionBarActivity implements
                 if (nextContact < System.currentTimeMillis()) {
                     view.setBackgroundColor(Color.WHITE);
                     contactName.setTextColor(Color.BLACK);
-
-                    TextView alarmIcon = (TextView) view.findViewById(R.id.alarmIcon);
-                    alarmIcon.setTypeface(FontUtils.getFontAwesome(getApplicationContext()));
                     alarmIcon.setVisibility(View.VISIBLE);
-                    RelativeLayout.LayoutParams layoutParams =
-                            new RelativeLayout.LayoutParams(contactName.getLayoutParams());
-                    layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.alarmIcon);
-                    contactName.setLayoutParams(layoutParams);
-
                     nextTv.setVisibility(View.GONE);
                     clockIcon.setVisibility(View.GONE);
                 } else {
@@ -181,6 +175,7 @@ public class MainActivity extends ActionBarActivity implements
                     // former color
                     view.setBackgroundColor(colorBackground);
                     contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
+                    alarmIcon.setVisibility(View.GONE);
                     nextTv.setVisibility(View.VISIBLE);
                     clockIcon.setVisibility(View.VISIBLE);
                     nextTv.setText(nextText);
