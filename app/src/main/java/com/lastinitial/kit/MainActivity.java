@@ -1,5 +1,6 @@
 package com.lastinitial.kit;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.LoaderManager;
@@ -22,13 +23,16 @@ import android.provider.ContactsContract.PhoneLookup;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Html;
 import android.text.format.DateUtils;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
@@ -161,6 +165,15 @@ public class MainActivity extends ActionBarActivity implements
                 if (nextContact < System.currentTimeMillis()) {
                     view.setBackgroundColor(Color.WHITE);
                     contactName.setTextColor(Color.BLACK);
+
+                    TextView alarmIcon = (TextView) view.findViewById(R.id.alarmIcon);
+                    alarmIcon.setTypeface(FontUtils.getFontAwesome(getApplicationContext()));
+                    alarmIcon.setVisibility(View.VISIBLE);
+                    RelativeLayout.LayoutParams layoutParams =
+                            new RelativeLayout.LayoutParams(contactName.getLayoutParams());
+                    layoutParams.addRule(RelativeLayout.RIGHT_OF, R.id.alarmIcon);
+                    contactName.setLayoutParams(layoutParams);
+
                     nextTv.setVisibility(View.GONE);
                     clockIcon.setVisibility(View.GONE);
                 } else {

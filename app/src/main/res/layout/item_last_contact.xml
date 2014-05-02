@@ -27,7 +27,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_vertical">
-    <TextView
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/contactName"
+            android:visibility="gone"
+            android:layout_marginRight="6sp"
+            android:text="@string/icon_clock"
+            android:textSize="20sp"
+            android:id="@+id/alarmIcon"
+            android:textColor="#FF5050" />
+
+        <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Contact Name"
