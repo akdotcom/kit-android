@@ -29,6 +29,7 @@ import java.util.GregorianCalendar;
 public class EntryDetailsActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
 
     private ContactsDbAdapter mDbHelper;
+    private LastContactUpdater mLastContactUpdater;
     private String lookupKey = null;
     private long rowId = -1L;
 
@@ -62,6 +63,8 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();
 
+        mLastContactUpdater = new LastContactUpdater();
+
         Intent intent = getIntent();
         rowId = intent.getLongExtra(MainActivity.DETAILS_DB_ROWID, -1L);
 
@@ -90,7 +93,6 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             if (photoUriString != null) {
                 contactImage.setImageURI(Uri.parse(photoUriString));
             } else {
-//                contactImage.setImageResource(R.drawable.ic_action_person);
                 contactImage.setImageToDefault();
             }
 
@@ -117,9 +119,12 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             rowId = mDbHelper.createContact(
                     cursor.getString(cursor.getColumnIndex(Contacts.LOOKUP_KEY)),
                     lastContacted,
-                    MainActivity.CONTACT_SYSTEM,
+                    MainActivity.CONTACT_TYPE_SYSTEM,
                     MainActivity.FREQUENCY_MONTHLY,
                     1);
+
+            // Initialize last contacted time.
+            mLastContactUpdater.updateContact(this, mDbHelper, rowId);
         }
 
         // We're done with the system contact information, so close the cursor.
@@ -203,8 +208,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
     @Override
     protected void onRestart() {
         super.onRestart();
-        LastContactUpdater updater = new LastContactUpdater();
-        Long updatedTime = updater.updateContact(this, mDbHelper, rowId);
+        Long updatedTime = mLastContactUpdater.updateContact(this, mDbHelper, rowId);
         if (updatedTime != null) {
             updateLastContactTextView(updatedTime);
             Cursor c = mDbHelper.fetchContact(rowId);
