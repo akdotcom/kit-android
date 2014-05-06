@@ -38,8 +38,10 @@ public class MainActivity extends ActionBarActivity implements
     public static final int FREQUENCY_MONTHLY = 2;
     public static final int FREQUENCY_YEARLY = 3;
 
-    public static final int CONTACT_SYSTEM = 1;
+    public static final int CONTACT_TYPE_SYSTEM = 1;
     public static final int CONTACT_TYPE_MANUAL = 2;
+    public static final int CONTACT_TYPE_CALL = 3;
+    public static final int CONTACT_TYPE_SMS = 4;
 
     // Loader for this component
     private static final int CONTACTS_LOADER = 0;
@@ -60,7 +62,8 @@ public class MainActivity extends ActionBarActivity implements
         mDbHelper.open();
 
         mUpdater = new LastContactUpdater();
-        mUpdater.update(this, mDbHelper);
+//        mUpdater.update(this, mDbHelper); // This now happens in onResume
+
 
         ComponentName receiver = new ComponentName(this, PeriodicUpdater.class);
         PackageManager pm = this.getPackageManager();
