@@ -43,6 +43,9 @@ public class LastContactUpdater {
     }
 
     private void update(Context context, ContactsDbAdapter contactsDb, long lastUpdate) {
+        // Update contact keys in case people merge/change contacts
+        contactsDb.updateLookupKeys();
+
         ContentResolver resolver = context.getContentResolver();
 
         Cursor dbCursor = contactsDb.fetchAllContacts();

@@ -1,11 +1,15 @@
 package com.lastinitial.kit;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.Contacts;
 import android.util.Log;
 
 /**
@@ -301,5 +305,26 @@ public class ContactsDbAdapter {
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
+    }
+
+    public void updateLookupKeys() {
+        ContentResolver resolver = mCtx.getContentResolver();
+        Cursor cursor = fetchAllContacts();
+        while (cursor.moveToNext()) {
+            String lookupKey = cursor.getString(cursor.getColumnIndex(KEY_LOOKUP_KEY));
+
+            final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
+            Uri res = ContactsContract.Contacts.lookupContact(resolver, lookupUri);
+            Cursor c = resolver.query(res, new String[]{Contacts.LOOKUP_KEY}, null, null, null);
+            if (c.moveToFirst()) {
+                String newKey = c.getString(c.getColumnIndex(Contacts.LOOKUP_KEY));
+                if (!lookupKey.equals(newKey)) {
+                    ContentValues args = new ContentValues();
+                    args.put(KEY_LOOKUP_KEY, newKey);
+                    long rowId = cursor.getLong(cursor.getColumnIndex(KEY_ROWID));
+                    mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null);
+                }
+            }
+        }
     }
 }
