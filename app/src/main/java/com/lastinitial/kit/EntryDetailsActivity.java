@@ -54,7 +54,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         TextView tvLastContactIcon = (TextView) findViewById(R.id.lastContactIcon);
         TextView tvFrequencyIcon = (TextView) findViewById(R.id.kitEveryIcon);
         TextView tvNextContactIcon = (TextView) findViewById(R.id.nextDescriptionIcon);
-        Button bDoneIcon = (Button) findViewById(R.id.button);
+        Button bDoneIcon = (Button) findViewById(R.id.buttonDone);
         tvLastContactIcon.setTypeface(FontUtils.getFontAwesome(this));
         tvFrequencyIcon.setTypeface(FontUtils.getFontAwesome(this));
         tvNextContactIcon.setTypeface(FontUtils.getFontAwesome(this));
