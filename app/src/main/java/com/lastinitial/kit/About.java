@@ -8,6 +8,7 @@ import android.support.v4.app.NavUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 public class About extends Activity {
 
@@ -16,6 +17,12 @@ public class About extends Activity {
         super.onCreate(savedInstanceState);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_about);
+
+        Button button = (Button) findViewById(R.id.rateButton);
+        button.setTypeface(FontUtils.getFontAwesome(this));
+
+        button = (Button) findViewById(R.id.emailButton);
+        button.setTypeface(FontUtils.getFontAwesome(this));
     }
 
 
@@ -45,7 +52,7 @@ public class About extends Activity {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("message/rfc822");
         intent.putExtra(Intent.EXTRA_EMAIL, new String[] {"ak@lastinitial.com"});
-        intent.putExtra(Intent.EXTRA_SUBJECT, "KIT Feedback");
+        intent.putExtra(Intent.EXTRA_SUBJECT, R.string.feedback_email_subject);
         startActivity(intent);
     }
 
