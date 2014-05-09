@@ -9,4 +9,6 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <dimen name="listItemHeight">84dp</dimen>
+
 </resources>

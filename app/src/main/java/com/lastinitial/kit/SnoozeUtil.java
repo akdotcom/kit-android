@@ -1,7 +1,6 @@
 package com.lastinitial.kit;
 
 import android.app.IntentService;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.text.format.DateUtils;
@@ -24,24 +23,30 @@ public class SnoozeUtil extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected synchronized void onHandleIntent(Intent intent) {
         if (ACTION_SNOOZE.equals(intent.getAction())) {
             long rowId = intent.getLongExtra(MainActivity.DETAILS_DB_ROWID, -1L);
             if (rowId < 0) {
                 Log.e("SnoozeUtil", "Snooze called without rowId");
+                return;
             }
-            ContactsDbAdapter contactsDbAdapter = new ContactsDbAdapter(this);
-            contactsDbAdapter.open();
-
-            long nextContact = System.currentTimeMillis() + DEFAULT_SNOOZE_TIME;
-            contactsDbAdapter.updateNextContact(rowId, nextContact);
-
-            contactsDbAdapter.close();
+            snoozeContact(this, rowId, DEFAULT_SNOOZE_TIME);
 
             Intent notificationIntent = new Intent(this, PeriodicUpdater.class);
             sendBroadcast(notificationIntent);
         } else {
             Log.v("SnoozeUtil", "Unkonwn action: " + intent.getAction());
         }
+    }
+
+    public synchronized void snoozeContact(Context context, long rowId, long snoozeTime) {
+        ContactsDbAdapter contactsDbAdapter = new ContactsDbAdapter(context);
+
+        contactsDbAdapter.open();
+
+        long nextContact = System.currentTimeMillis() + snoozeTime;
+        contactsDbAdapter.updateNextContact(rowId, nextContact);
+
+        contactsDbAdapter.close();
     }
 }

@@ -11,6 +11,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -83,13 +84,29 @@ public class MainActivity extends ActionBarActivity implements
 
         // Now for the UI
         setContentView(R.layout.activity_main);
+
+        View listBackground = findViewById(R.id.listBackground);
+
+        TextView snoozeIcon = (TextView)listBackground.findViewById(R.id.snoozeIcon);
+        snoozeIcon.setTypeface(FontUtils.getFontAwesome(this));
+        TextView snoozeText = (TextView)listBackground.findViewById(R.id.snoozeText);
+        long now = System.currentTimeMillis();
+        snoozeText.setText(RelativeDateUtils.getRelativeTimeSpanString(
+                now + SnoozeUtil.DEFAULT_SNOOZE_TIME, now));
+
+        TextView talkedIcon = (TextView)listBackground.findViewById(R.id.talkedIcon);
+        talkedIcon.setTypeface(FontUtils.getFontAwesome(this));
+
         ListView listView = (ListView) findViewById(R.id.entriesList);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
                 ContactsContract.QuickContact.showQuickContact(
-                        adapterView.getContext(), view, contactUri, ContactsContract.QuickContact.MODE_LARGE, null);
+                        adapterView.getContext(),
+                        view, contactUri,
+                        ContactsContract.QuickContact.MODE_LARGE,
+                        null);
             }
         });
 
@@ -194,11 +211,57 @@ public class MainActivity extends ActionBarActivity implements
             }
         };
         listView.setAdapter(mAdapter);
+
+        SwipeDismissListViewTouchListener touchListener =
+                new SwipeDismissListViewTouchListener(
+                        listView,
+                        listBackground,
+                        new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                            @Override
+                            public boolean canDismiss(int position) {
+                                return true;
+                            }
+
+                            public void onDismiss(ListView listView,
+                                                  int[] reverseSortedPositions,
+                                                  boolean isDismissRight) {
+                                for (int position : reverseSortedPositions) {
+                                    long itemId = mAdapter.getItemId(position);
+                                    if (isDismissRight) {
+                                        SnoozeUtil snoozeUtil = new SnoozeUtil();
+                                        snoozeUtil.snoozeContact(
+                                                getApplicationContext(),
+                                                itemId,
+                                                SnoozeUtil.DEFAULT_SNOOZE_TIME);
+                                    } else {
+                                        mDbHelper.updateLastContacted(itemId,
+                                                System.currentTimeMillis(),
+                                                CONTACT_TYPE_MANUAL);
+                                    }
+                                }
+                                // Todo(ak): This is gross. Because the ResourceCursorAdapter
+                                // does all this gunk below (like swapping cursors)
+                                // to load things in the background before
+                                // rendering, .notifyDataSetChanged() gets called all the time
+                                // and can't initiate a refresh of the list because that would
+                                // cause an infinite loop.
+                                // mAdapter.notifyDataSetChanged();
+                                getLoaderManager().restartLoader(
+                                        CONTACTS_LOADER, null, MainActivity.this);
+                            }
+                        });
+
+        listView.setOnTouchListener(touchListener);
+        listView.setOnScrollListener(touchListener.makeScrollListener());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        // Explicitly hide these in case they've been left visible
+        findViewById(R.id.snoozeBackground).setVisibility(View.INVISIBLE);
+        findViewById(R.id.talkedBackground).setVisibility(View.INVISIBLE);
+
         mUpdater.update(this, mDbHelper);
         getLoaderManager().restartLoader(CONTACTS_LOADER, null, this);
     }
