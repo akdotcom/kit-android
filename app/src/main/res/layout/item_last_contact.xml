@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="84dp"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/listItemHeight"
     android:focusable="false"
     android:focusableInTouchMode="false">
 
@@ -12,32 +12,35 @@
         android:id="@+id/images"
         android:focusable="false"
         android:focusableInTouchMode="false" >
-    <ImageView
-        android:id="@+id/quickbadge"
-        android:layout_height="64dp"
-        android:layout_width="64dp"
-        android:scaleType="centerCrop"
-        android:minHeight="64dp"
-        android:minWidth="64dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="20dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_toRightOf="@+id/quickbadge"
-        android:layout_marginRight="6sp"
-        android:gravity="center_vertical"
-        android:visibility="gone"
-        android:text="@string/icon_clock"
-        android:textSize="20sp"
-        android:id="@+id/alarmIcon"
-        android:textColor="#FF5050" />
+        <!-- Why padding left and right? To deal with rendering bug in API v16 -->
+        <ImageView
+            android:id="@+id/quickbadge"
+            android:layout_height="64dp"
+            android:layout_width="104dp"
+            android:minHeight="64dp"
+            android:minWidth="64dp"
+            android:scaleType="centerCrop"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/quickbadge"
+            android:paddingRight="6sp"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+            android:text="@string/icon_clock"
+            android:textSize="20sp"
+            android:id="@+id/alarmIcon"
+            android:textColor="#FF5050" />
+
     </RelativeLayout>
     <!--android:paddingTop="1sp"-->
 
@@ -56,17 +59,7 @@
         android:textSize="20sp"
         android:id="@+id/contactName"
         android:textColor="#000000" />
-    <!--android:layout_marginBottom="10dp"-->
-    <!--android:minHeight="64dp"-->
 
-    <!--<ImageView-->
-        <!--android:src="@drawable/alarm"-->
-        <!--android:layout_width="20sp"-->
-        <!--android:layout_height="20sp"-->
-        <!--android:id="@+id/imageView"-->
-        <!--android:alpha="0.8"-->
-        <!--android:layout_below="@+id/contactName"-->
-        <!--android:layout_alignParentLeft="true"/>-->
     <TextView
         android:id="@+id/next_description"
         android:layout_width="wrap_content"
