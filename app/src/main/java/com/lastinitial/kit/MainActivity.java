@@ -122,8 +122,19 @@ public class MainActivity extends ActionBarActivity implements
                 null, 0 ) {
             @Override
             public void bindView(View view, Context context, Cursor cursor) {
-                TextView tvName = (TextView) view.findViewById(R.id.contactName);
-                ImageView imageView = (ImageView) view.findViewById(R.id.quickbadge);
+                ViewHolder viewHolder;
+                if (view.getTag(R.id.view_holder) == null) {
+                    viewHolder = new ViewHolder();
+                    viewHolder.alarmIcon = (TextView) view.findViewById(R.id.alarmIcon);
+                    viewHolder.contactName = (TextView) view.findViewById(R.id.contactName);
+                    viewHolder.nextDescription = (TextView) view.findViewById(R.id.next_description);
+                    viewHolder.nextValue = (TextView) view.findViewById(R.id.next_value);
+                    viewHolder.quickbadge = (ImageView) view.findViewById(R.id.quickbadge);
+                    viewHolder.contactOptions = (ImageView) view.findViewById(R.id.contactOptions);
+                    view.setTag(R.id.view_holder, viewHolder);
+                } else {
+                    viewHolder = (ViewHolder) view.getTag(R.id.view_holder);
+                }
 
                 int lookupKeyIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_LOOKUP_KEY);
                 String lookupKey = cursor.getString(lookupKeyIndex);
@@ -139,16 +150,17 @@ public class MainActivity extends ActionBarActivity implements
                 };
                 Cursor c = resolver.query(res, lookupFields, null, null, null);
                 if (c.moveToFirst()) {
-                    tvName.setText(c.getString(c.getColumnIndex(PhoneLookup.DISPLAY_NAME)));
+                    viewHolder.contactName.setText(
+                            c.getString(c.getColumnIndex(PhoneLookup.DISPLAY_NAME)));
                     String thumbnailUri = c.getString(c.getColumnIndex(Contacts.PHOTO_THUMBNAIL_URI));
                     if (thumbnailUri != null) {
-                        imageView.setImageURI(Uri.parse(thumbnailUri));
+                        viewHolder.quickbadge.setImageURI(Uri.parse(thumbnailUri));
                     } else {
-                        imageView.setImageResource(R.drawable.ic_action_person);
+                        viewHolder.quickbadge.setImageResource(R.drawable.ic_action_person);
                     }
                     c.close();
                 } else {
-                    tvName.setText("Unknown");
+                    viewHolder.contactName.setText("Unknown");
                 }
 
                 int nextContactIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
@@ -157,12 +169,8 @@ public class MainActivity extends ActionBarActivity implements
                 int[] attributes = { android.R.attr.colorBackground };
                 TypedArray array = getTheme().obtainStyledAttributes(attributes);
                 int colorBackground = array.getColor(0, Color.WHITE);
-                TextView contactName = (TextView) view.findViewById(R.id.contactName);
-                TextView nextTv = (TextView) view.findViewById(R.id.next_value);
-                TextView clockIcon = (TextView) view.findViewById(R.id.next_description);
-                clockIcon.setTypeface(FontUtils.getFontAwesome(context));
-                TextView alarmIcon = (TextView) view.findViewById(R.id.alarmIcon);
-                alarmIcon.setTypeface(FontUtils.getFontAwesome(getApplicationContext()));
+                viewHolder.nextDescription.setTypeface(FontUtils.getFontAwesome(context));
+                viewHolder.alarmIcon.setTypeface(FontUtils.getFontAwesome(context));
 
                 CharSequence nextText = null;
                 long currentTime = System.currentTimeMillis();
@@ -175,19 +183,19 @@ public class MainActivity extends ActionBarActivity implements
 
                 if (nextContact < System.currentTimeMillis()) {
                     view.setBackgroundColor(Color.WHITE);
-                    contactName.setTextColor(Color.BLACK);
-                    alarmIcon.setVisibility(View.VISIBLE);
-                    nextTv.setVisibility(View.GONE);
-                    clockIcon.setVisibility(View.GONE);
+                    viewHolder.contactName.setTextColor(Color.BLACK);
+                    viewHolder.alarmIcon.setVisibility(View.VISIBLE);
+                    viewHolder.nextValue.setVisibility(View.GONE);
+                    viewHolder.nextDescription.setVisibility(View.GONE);
                 } else {
                     // Explicitly do this because otherwise reused imageViews sometimes keep their
                     // former color
                     view.setBackgroundColor(colorBackground);
-                    contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
-                    alarmIcon.setVisibility(View.GONE);
-                    nextTv.setVisibility(View.VISIBLE);
-                    clockIcon.setVisibility(View.VISIBLE);
-                    nextTv.setText(nextText);
+                    viewHolder.contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
+                    viewHolder.alarmIcon.setVisibility(View.GONE);
+                    viewHolder.nextValue.setVisibility(View.VISIBLE);
+                    viewHolder.nextValue.setText(nextText);
+                    viewHolder.nextDescription.setVisibility(View.VISIBLE);
                 }
 
                 view.setTag(R.id.view_lookup_uri, lookupUri);
@@ -195,14 +203,16 @@ public class MainActivity extends ActionBarActivity implements
                 final long dbId = cursor.getLong(dbIdIndex);
                 view.setTag(R.id.view_db_rowid, dbId);
 
-                ImageView ivContactOptions = (ImageView) view.findViewById(R.id.contactOptions);
+                ImageView ivContactOptions = viewHolder.contactOptions;
                 ivContactOptions.setTag(R.id.view_lookup_uri, lookupUri);
                 ivContactOptions.setTag(R.id.view_db_rowid, dbId);
                 ivContactOptions.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
-                        Intent intent = new Intent(getApplicationContext(), EntryDetailsActivity.class);
+                        Intent intent = new Intent(
+                                getApplicationContext(),
+                                EntryDetailsActivity.class);
                         intent.setData(contactUri);
                         intent.setAction(Intent.ACTION_MAIN);
                         startActivity(intent);
@@ -302,7 +312,8 @@ public class MainActivity extends ActionBarActivity implements
         // This is called when the last Cursor provided to onLoadFinished()
         // above is about to be closed.  We need to make sure we are no
         // longer using it.
-        mAdapter.swapCursor(null);    }
+        mAdapter.swapCursor(null);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -354,5 +365,14 @@ public class MainActivity extends ActionBarActivity implements
                 startActivity(intent);
             }
         }
+    }
+
+    static class ViewHolder {
+        ImageView quickbadge;
+        TextView alarmIcon;
+        TextView contactName;
+        TextView nextDescription;
+        TextView nextValue;
+        ImageView contactOptions;
     }
 }

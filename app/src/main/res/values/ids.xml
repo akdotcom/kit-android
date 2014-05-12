@@ -7,4 +7,5 @@
     <item type="id" name="action_run_notifications" />
     <item type="id" name="action_remove_contact" />
     <item type="id" name="action_about" />
+    <item type="id" name="view_holder"/>
 </resources>
