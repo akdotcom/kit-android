@@ -325,6 +325,8 @@ public class ContactsDbAdapter {
                     mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null);
                 }
             }
+            c.close();
         }
+        cursor.close();
     }
 }

@@ -59,6 +59,7 @@ public class LastContactUpdater {
                     dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED));
             dbKeysIdsLc.put(key, Pair.create(rowId, lastContacted));
         }
+        dbCursor.close();
 
         String[] projection = {
                 CallLog.Calls._ID,
@@ -135,7 +136,6 @@ public class LastContactUpdater {
             String number = telephonyCursor.getString(numIndex);
             Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
             Cursor contactCursor = resolver.query(uri, keyProjection, null, null, null);
-            Log.v("*****", number + " : " + telephonyCursor.getLong(dateIndex));
 
             // If there's a corresponding contact
             if (contactCursor.moveToFirst()) {
@@ -219,6 +219,7 @@ public class LastContactUpdater {
                 contactsDb.updateLastContacted(
                         rowId, newLastContacted, MainActivity.CONTACT_TYPE_CALL);
             }
+            cursor.close();
         }
 
         // For all the numbers, check if there's been a recent text message.
@@ -239,6 +240,7 @@ public class LastContactUpdater {
                 contactsDb.updateLastContacted(
                         rowId, newLastContacted, MainActivity.CONTACT_TYPE_SMS);
             }
+            smsCursor.close();
         }
 
         if (newLastContacted != dbLastContacted) {
