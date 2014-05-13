@@ -12,5 +12,6 @@
     android:layout_height="wrap_content"
     android:ellipsize="marquee"
     android:textSize="20sp"
+    android:padding="4sp"
     android:textAlignment="inherit"/>
     <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
