@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -114,6 +115,7 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         }
 
 
+        boolean isNew = false;
         if (rowId == -1L) {
             // Create database entry, default frequency = 1 month.
             rowId = mDbHelper.createContact(
@@ -125,6 +127,8 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
 
             // Initialize last contacted time.
             mLastContactUpdater.updateContact(this, mDbHelper, rowId);
+
+            isNew = true;
         }
 
         // We're done with the system contact information, so close the cursor.
@@ -177,8 +181,8 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
 //            }
 //        });
 
-
-        final long lastContact = dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED));
+        int lastContactIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED);
+        final long lastContact = dbCursor.getLong(lastContactIndex);
         updateLastContactTextView(lastContact);
 
         final View lastContactInfo = findViewById(R.id.lastContact);
@@ -190,7 +194,8 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             }
         });
 
-        final long nextContact = dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
+        int nextContactIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
+        final long nextContact = dbCursor.getLong(nextContactIndex);
         updateNextContactTextView(nextContact);
 
         final View nextContactInfo = findViewById(R.id.nextContact);
@@ -201,6 +206,18 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
                 newFragment.show(getFragmentManager(), "datePicker");
             }
         });
+
+        if (isNew) {
+            fTypeSpinner.postDelayed(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            Spinner typeSpinner = (Spinner) findViewById(R.id.fTypeSpinner);
+                            typeSpinner.performClick();
+                        }
+                    },
+                    DateUtils.SECOND_IN_MILLIS);
+        }
 
         dbCursor.close();
     }
