@@ -16,11 +16,12 @@
     <string name="next_in_touch">Talk again</string>
     <string name="unknown_time">\?</string>
     <string name="keep_in_touch_every">Talk every</string>
-    <string name="add_contact">Add Someone</string>
+    <string name="add_contact">Add someone</string>
     <string name="its_been_a_while">It\'s been a while since you last talked.</string>
     <string name="you_last_talked">You last talked</string>
     <string name="talked_today">Talked today</string>
     <string name="stay_in_touch">Stay in touch</string>
+    <string name="asap">ASAP</string>
     <string name="menu_run_notifications">Run notifications</string>
     <string name="menu_about">Feedback</string>
     <string name="title_activity_about">Feedback</string>
