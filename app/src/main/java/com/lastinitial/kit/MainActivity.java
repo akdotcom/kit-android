@@ -50,8 +50,14 @@ public class MainActivity extends ActionBarActivity implements
     private ContactsDbAdapter mDbHelper;
     private ResourceCursorAdapter mAdapter;
     private LastContactUpdater mUpdater = new LastContactUpdater();
+    private ContactsCache mContactsCache;
 
     public static final int LOW_PRIORITY_TEXT_COLOR = Color.parseColor("#666666");
+    public static final int LOW_PRIORITY_CLOCK_COLOR = Color.parseColor("#999999");
+    public static final int ALARM_ICON_COLOR = Color.parseColor("#FF5050");
+
+
+    public static Integer DEFAULT_BACKGROUND_COLOR = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +70,14 @@ public class MainActivity extends ActionBarActivity implements
 
         mUpdater = new LastContactUpdater();
 //        mUpdater.update(this, mDbHelper); // This now happens in onResume
+
+        mContactsCache = new ContactsCache(this);
+
+        if (DEFAULT_BACKGROUND_COLOR == null) {
+            int[] attributes = { android.R.attr.colorBackground };
+            TypedArray array = getTheme().obtainStyledAttributes(attributes);
+            DEFAULT_BACKGROUND_COLOR = array.getColor(0, Color.WHITE);
+        }
 
 
         ComponentName receiver = new ComponentName(this, PeriodicUpdater.class);
@@ -125,52 +139,44 @@ public class MainActivity extends ActionBarActivity implements
                 ViewHolder viewHolder;
                 if (view.getTag(R.id.view_holder) == null) {
                     viewHolder = new ViewHolder();
-                    viewHolder.alarmIcon = (TextView) view.findViewById(R.id.alarmIcon);
                     viewHolder.contactName = (TextView) view.findViewById(R.id.contactName);
                     viewHolder.nextDescription = (TextView) view.findViewById(R.id.next_description);
                     viewHolder.nextValue = (TextView) view.findViewById(R.id.next_value);
                     viewHolder.quickbadge = (ImageView) view.findViewById(R.id.quickbadge);
                     viewHolder.contactOptions = (ImageView) view.findViewById(R.id.contactOptions);
                     view.setTag(R.id.view_holder, viewHolder);
+
+                    // Initialize some stuff here that's constant across all rows
+                    viewHolder.nextDescription.setTypeface(FontUtils.getFontAwesome(context));
+                    viewHolder.contactOptions.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
+                            Intent intent = new Intent(
+                                    getApplicationContext(),
+                                    EntryDetailsActivity.class);
+                            intent.setData(contactUri);
+                            intent.setAction(Intent.ACTION_MAIN);
+                            startActivity(intent);
+                        }
+                    });
                 } else {
                     viewHolder = (ViewHolder) view.getTag(R.id.view_holder);
                 }
 
                 int lookupKeyIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_LOOKUP_KEY);
                 String lookupKey = cursor.getString(lookupKeyIndex);
-                final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
 
-                ContentResolver resolver = context.getContentResolver();
-                Uri res = Contacts.lookupContact(resolver, lookupUri);
-                String[] lookupFields = {
-                        Contacts._ID,
-                        Contacts.LOOKUP_KEY,
-                        Contacts.DISPLAY_NAME,
-                        Contacts.PHOTO_THUMBNAIL_URI,
-                };
-                Cursor c = resolver.query(res, lookupFields, null, null, null);
-                if (c.moveToFirst()) {
-                    viewHolder.contactName.setText(
-                            c.getString(c.getColumnIndex(PhoneLookup.DISPLAY_NAME)));
-                    String thumbnailUri = c.getString(c.getColumnIndex(Contacts.PHOTO_THUMBNAIL_URI));
-                    if (thumbnailUri != null) {
-                        viewHolder.quickbadge.setImageURI(Uri.parse(thumbnailUri));
-                    } else {
-                        viewHolder.quickbadge.setImageResource(R.drawable.ic_action_person);
-                    }
-                    c.close();
+                viewHolder.contactName.setText(mContactsCache.getContactName(lookupKey));
+                Uri thumbnail = mContactsCache.getContactImage(lookupKey);
+                if (thumbnail != null) {
+                    viewHolder.quickbadge.setImageURI(thumbnail);
                 } else {
-                    viewHolder.contactName.setText("Unknown");
+                    viewHolder.quickbadge.setImageResource(R.drawable.ic_action_person);
                 }
 
                 int nextContactIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
                 long nextContact = cursor.getLong(nextContactIndex);
-
-                int[] attributes = { android.R.attr.colorBackground };
-                TypedArray array = getTheme().obtainStyledAttributes(attributes);
-                int colorBackground = array.getColor(0, Color.WHITE);
-                viewHolder.nextDescription.setTypeface(FontUtils.getFontAwesome(context));
-                viewHolder.alarmIcon.setTypeface(FontUtils.getFontAwesome(context));
 
                 CharSequence nextText = null;
                 long currentTime = System.currentTimeMillis();
@@ -178,46 +184,31 @@ public class MainActivity extends ActionBarActivity implements
                     nextText =
                             RelativeDateUtils.getRelativeTimeSpanString(nextContact, currentTime);
                 } else {
-                    nextText = "ASAP";
+                    nextText = getResources().getString(R.string.asap);
                 }
+                viewHolder.nextValue.setText(nextText);
 
+                boolean isAlertingAlready =
+                        (viewHolder.nextDescription.getCurrentTextColor() == ALARM_ICON_COLOR);
+                // Check if the contact entry should be alerting and change the visual style
+                // if needed.
                 if (nextContact < System.currentTimeMillis()) {
-                    view.setBackgroundColor(Color.WHITE);
-                    viewHolder.contactName.setTextColor(Color.BLACK);
-                    viewHolder.alarmIcon.setVisibility(View.VISIBLE);
-                    viewHolder.nextValue.setVisibility(View.GONE);
-                    viewHolder.nextDescription.setVisibility(View.GONE);
+                    if (!isAlertingAlready) {
+                        viewHolder.nextDescription.setTextColor(ALARM_ICON_COLOR);
+                        viewHolder.contactName.setTextColor(Color.BLACK);
+                        view.setBackgroundColor(Color.WHITE);
+                    }
                 } else {
-                    // Explicitly do this because otherwise reused imageViews sometimes keep their
-                    // former color
-                    view.setBackgroundColor(colorBackground);
-                    viewHolder.contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
-                    viewHolder.alarmIcon.setVisibility(View.GONE);
-                    viewHolder.nextValue.setVisibility(View.VISIBLE);
-                    viewHolder.nextValue.setText(nextText);
-                    viewHolder.nextDescription.setVisibility(View.VISIBLE);
+                    if (isAlertingAlready) {
+                        view.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+                        viewHolder.contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
+                        viewHolder.nextDescription.setTextColor(LOW_PRIORITY_CLOCK_COLOR);
+                    }
                 }
 
+                final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
                 view.setTag(R.id.view_lookup_uri, lookupUri);
-                final int dbIdIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID);
-                final long dbId = cursor.getLong(dbIdIndex);
-                view.setTag(R.id.view_db_rowid, dbId);
-
-                ImageView ivContactOptions = viewHolder.contactOptions;
-                ivContactOptions.setTag(R.id.view_lookup_uri, lookupUri);
-                ivContactOptions.setTag(R.id.view_db_rowid, dbId);
-                ivContactOptions.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
-                        Intent intent = new Intent(
-                                getApplicationContext(),
-                                EntryDetailsActivity.class);
-                        intent.setData(contactUri);
-                        intent.setAction(Intent.ACTION_MAIN);
-                        startActivity(intent);
-                    }
-                });
+                viewHolder.contactOptions.setTag(R.id.view_lookup_uri, lookupUri);
             }
         };
         listView.setAdapter(mAdapter);
@@ -369,7 +360,6 @@ public class MainActivity extends ActionBarActivity implements
 
     static class ViewHolder {
         ImageView quickbadge;
-        TextView alarmIcon;
         TextView contactName;
         TextView nextDescription;
         TextView nextValue;

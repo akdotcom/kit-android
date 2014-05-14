@@ -310,12 +310,21 @@ public class ContactsDbAdapter {
     public void updateLookupKeys() {
         ContentResolver resolver = mCtx.getContentResolver();
         Cursor cursor = fetchAllContacts();
-        while (cursor.moveToNext()) {
-            String lookupKey = cursor.getString(cursor.getColumnIndex(KEY_LOOKUP_KEY));
 
+        // Populate the ContactsCache while we're at it.
+        ContactsCache contactsCache = new ContactsCache(mCtx);
+
+        while (cursor.moveToNext()) {
+            String[] lookupFields = {
+                    Contacts.LOOKUP_KEY,
+                    Contacts.DISPLAY_NAME,
+                    Contacts.PHOTO_THUMBNAIL_URI,
+            };
+
+            String lookupKey = cursor.getString(cursor.getColumnIndex(KEY_LOOKUP_KEY));
             final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
             Uri res = ContactsContract.Contacts.lookupContact(resolver, lookupUri);
-            Cursor c = resolver.query(res, new String[]{Contacts.LOOKUP_KEY}, null, null, null);
+            Cursor c = resolver.query(res, lookupFields, null, null, null);
             if (c.moveToFirst()) {
                 String newKey = c.getString(c.getColumnIndex(Contacts.LOOKUP_KEY));
                 if (!lookupKey.equals(newKey)) {
@@ -324,6 +333,11 @@ public class ContactsDbAdapter {
                     long rowId = cursor.getLong(cursor.getColumnIndex(KEY_ROWID));
                     mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null);
                 }
+
+                String thumbnailUri = c.getString(c.getColumnIndex(Contacts.PHOTO_THUMBNAIL_URI));
+                String contactName = c.getString(c.getColumnIndex(Contacts.DISPLAY_NAME));
+                contactsCache.setContactImage(lookupKey, thumbnailUri);
+                contactsCache.setContactName(lookupKey, contactName);
             }
             c.close();
         }
