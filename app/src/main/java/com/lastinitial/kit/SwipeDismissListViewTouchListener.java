@@ -210,7 +210,6 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                     child.getHitRect(rect);
                     if (rect.contains(x, y)) {
                         mDownView = child;
-                        mBackgroundView.setTranslationY(mDownView.getTop());
                         break;
                     }
                 }
@@ -319,21 +318,24 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                 float deltaY = motionEvent.getRawY() - mDownY;
 
                 SwipeDirection dir = (deltaX > 0) ? SwipeDirection.RIGHT : SwipeDirection.LEFT;
-                if (dir != mSwipeDirection) {
-                    if (dir == SwipeDirection.RIGHT) {
-                        mBackgroundView.findViewById(R.id.snoozeBackground).setVisibility(View.VISIBLE);
-                        mBackgroundView.findViewById(R.id.talkedBackground).setVisibility(View.INVISIBLE);
-                    } else {
-                        mBackgroundView.findViewById(R.id.snoozeBackground).setVisibility(View.INVISIBLE);
-                        mBackgroundView.findViewById(R.id.talkedBackground).setVisibility(View.VISIBLE);
-                    }
-                    mSwipeDirection = dir;
-                }
 
                 if (Math.abs(deltaX) > mSlop && Math.abs(deltaY) < Math.abs(deltaX) / 2) {
                     mSwiping = true;
                     mSwipingSlop = (deltaX > 0 ? mSlop : -mSlop);
                     mListView.requestDisallowInterceptTouchEvent(true);
+
+                    // Set up the background for when the view swipes away.
+                    mBackgroundView.setTranslationY(mDownView.getTop());
+                    if (dir != mSwipeDirection) {
+                        if (dir == SwipeDirection.RIGHT) {
+                            mBackgroundView.findViewById(R.id.snoozeBackground).setVisibility(View.VISIBLE);
+                            mBackgroundView.findViewById(R.id.talkedBackground).setVisibility(View.INVISIBLE);
+                        } else {
+                            mBackgroundView.findViewById(R.id.snoozeBackground).setVisibility(View.INVISIBLE);
+                            mBackgroundView.findViewById(R.id.talkedBackground).setVisibility(View.VISIBLE);
+                        }
+                        mSwipeDirection = dir;
+                    }
 
                     // Cancel ListView's touch (un-highlighting the item)
                     MotionEvent cancelEvent = MotionEvent.obtain(motionEvent);
