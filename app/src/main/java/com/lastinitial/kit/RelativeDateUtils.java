@@ -37,7 +37,7 @@ public class RelativeDateUtils {
             long scalar = 0;
             String units = "day";
 
-            if (diff < WEEK_IN_MILLIS) {
+            if (diff < 6 * DAY_IN_MILLIS) {
                 // Default library does the right thing in this case
                 return DateUtils.getRelativeTimeSpanString(time, now, DateUtils.DAY_IN_MILLIS);
             } else if (diff < 2L * MONTH_IN_MILLIS) {
