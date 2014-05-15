@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -308,6 +309,11 @@ public class ContactsDbAdapter {
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
         return exists;
+    }
+
+    public long numContacts() {
+        long result = DatabaseUtils.queryNumEntries(mDb, DATABASE_TABLE);
+        return result;
     }
 
     public void updateLookupKeys() {
