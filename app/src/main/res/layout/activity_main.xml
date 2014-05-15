@@ -120,12 +120,102 @@
         android:divider="#CCCCCC"
         android:dividerHeight="1dp"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/entriesList"></ListView>
+    android:id="@+id/entriesList" />
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:id="@+id/listEndSeperater"
         android:layout_alignBottom="@+id/entriesList"
         android:background="#CCCCCC" />
+
+    <RelativeLayout
+        android:id="@+id/nudge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/listEndSeperater"
+        android:layout_margin="30dp"
+        android:visibility="gone"
+        >
+        <TextView
+            android:id="@+id/nudgeCta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="#333333"
+            android:text="@string/nudge_cta"/>
+        <TextView
+            android:id="@+id/nudgeSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nudgeCta"
+            android:layout_marginTop="20sp"
+            android:textSize="20sp"
+            android:textColor="#333333"
+            android:text="@string/nudge_suggestions"/>
+        <TextView
+            android:id="@+id/nudgeExplanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nudgeSuggestions"
+            android:layout_marginTop="20sp"
+            android:textSize="20sp"
+            android:textColor="#333333"
+            android:text="@string/nudge_explanation"/>
+        <TextView
+            android:id="@+id/nudgeCloser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nudgeExplanation"
+            android:layout_marginTop="20sp"
+            android:textSize="20sp"
+            android:textColor="#333333"
+            android:text="@string/nudge_closer"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/swipeEDU"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/listEndSeperater"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+>
+
+        <TextView
+            android:id="@+id/leftArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:textColor="#CC3366FF"
+            android:textSize="40sp"
+            android:text="@string/icon_leftarrow"
+            />
+
+        <TextView
+            android:id="@+id/rightArrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:textColor="#CCFF5050"
+            android:textSize="40sp"
+            android:text="@string/icon_rightarrow"
+            />
+
+        <TextView
+            android:id="@+id/swipeEduText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/leftArrow"
+            android:layout_toLeftOf="@id/rightArrow"
+            android:layout_alignTop="@id/leftArrow"
+            android:layout_alignBottom="@id/leftArrow"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="#999999"
+            android:text="@string/swipe_edu"/>
+
+    </RelativeLayout>
 
 </RelativeLayout>

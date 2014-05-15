@@ -1,17 +1,20 @@
 package com.lastinitial.kit;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
@@ -19,6 +22,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -29,6 +34,9 @@ public class MainActivity extends ActionBarActivity implements
         LoaderManager.LoaderCallbacks<Cursor>{
 
     public static final String DETAILS_DB_ROWID = "com.lastinitial.kit.DETAILS_DB_ROWID";
+
+    public static final String HAS_SWIPED = "HAS_SWPIED";
+    public static final String EDU_INFO_PREFS = "EDU_INFO_PREFS";
 
     public static final int FREQUENCY_DAILY = 0;
     public static final int FREQUENCY_WEEKLY = 1;
@@ -55,7 +63,6 @@ public class MainActivity extends ActionBarActivity implements
     // Default background color for lists in Holo.Light. Obtained by calling
     //    int[] attributes = { android.R.attr.colorBackground };
     //    TypedArray array = getTheme().obtainStyledAttributes(attributes);
-
     public static final int DEFAULT_BACKGROUND_COLOR = -789517;
 
     @Override
@@ -103,7 +110,10 @@ public class MainActivity extends ActionBarActivity implements
         TextView talkedIcon = (TextView)listBackground.findViewById(R.id.talkedIcon);
         talkedIcon.setTypeface(FontUtils.getFontAwesome(this));
 
-        ListView listView = (ListView) findViewById(R.id.entriesList);
+        ((TextView) findViewById(R.id.leftArrow)).setTypeface(FontUtils.getFontAwesome(this));
+        ((TextView) findViewById(R.id.rightArrow)).setTypeface(FontUtils.getFontAwesome(this));
+
+        final ListView listView = (ListView) findViewById(R.id.entriesList);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -153,8 +163,6 @@ public class MainActivity extends ActionBarActivity implements
                         }
                     });
 
-                    // Do this, otherwise the default is sometimes transparent
-//                    view.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
                 } else {
                     viewHolder = (ViewHolder) view.getTag(R.id.view_holder);
                 }
@@ -257,6 +265,30 @@ public class MainActivity extends ActionBarActivity implements
         // Explicitly hide these in case they've been left visible
         findViewById(R.id.snoozeBackground).setVisibility(View.INVISIBLE);
         findViewById(R.id.talkedBackground).setVisibility(View.INVISIBLE);
+
+        // If there are no contacts, show the nudge, and maybe the swipe EDU.
+        View nudgeView = findViewById(R.id.nudge);
+        View swipeEduView = findViewById(R.id.swipeEDU);
+        if (mDbHelper.numContacts() == 0) {
+            nudgeView.setVisibility(View.VISIBLE);
+            swipeEduView.setVisibility(View.GONE);
+        } else {
+            nudgeView.setVisibility(View.GONE);
+
+            SharedPreferences prefs = getSharedPreferences(EDU_INFO_PREFS, 0 /* MODE_PRIVATE */);
+            boolean hasSwiped = prefs.getBoolean(HAS_SWIPED, false);
+            if (hasSwiped) {
+                boolean isRelease =
+                        (0 == (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
+                if (isRelease) {
+                    swipeEduView.setVisibility(View.GONE);
+                } else {
+                    Log.v("MainActivity", "Showing Swipe EDU only because in DEBUG mode");
+                }
+            } else {
+                swipeEduView.setVisibility(View.VISIBLE);
+            }
+        }
 
         mUpdater.update(this, mDbHelper);
         getLoaderManager().restartLoader(CONTACTS_LOADER, null, this);

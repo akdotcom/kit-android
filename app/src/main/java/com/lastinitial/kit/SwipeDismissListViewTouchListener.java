@@ -18,6 +18,7 @@ package com.lastinitial.kit;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.SystemClock;
 import android.view.MotionEvent;
@@ -248,6 +249,17 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
             case MotionEvent.ACTION_UP: {
                 if (mVelocityTracker == null) {
                     break;
+                }
+
+                if (mSwiping) {
+                    // User has swiped. Update system preference so we no longer show the Swipe EDU.
+                    SharedPreferences prefs =
+                            view.getContext().getSharedPreferences(MainActivity.EDU_INFO_PREFS, 0);
+                    if (!prefs.getBoolean(MainActivity.HAS_SWIPED, false)) {
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putBoolean(MainActivity.HAS_SWIPED, true);
+                        editor.commit();
+                    }
                 }
 
                 float deltaX = motionEvent.getRawX() - mDownX;
