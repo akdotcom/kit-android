@@ -4,7 +4,9 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
@@ -20,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.QuickContactBadge;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +30,7 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class EntryDetailsActivity extends ActionBarActivity implements AdapterView.OnItemSelectedListener {
+public class EntryDetailsActivity extends ActionBarActivity {
 
     private ContactsDbAdapter mDbHelper;
     private LastContactUpdater mLastContactUpdater;
@@ -59,7 +62,8 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         tvLastContactIcon.setTypeface(FontUtils.getFontAwesome(this));
         tvFrequencyIcon.setTypeface(FontUtils.getFontAwesome(this));
         tvNextContactIcon.setTypeface(FontUtils.getFontAwesome(this));
-        bDoneIcon.setTypeface(FontUtils.getFontAwesome(this));
+//        bDoneIcon.setTypeface(FontUtils.getFontAwesome(this));
+        bDoneIcon.setText("Done");
 
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();
@@ -134,52 +138,51 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
         // We're done with the system contact information, so close the cursor.
         cursor.close();
 
+        Resources resources = getResources();
+        final String[] freqArray = resources.getStringArray(R.array.frequency);
+        final int[] freqTypes = resources.getIntArray(R.array.frequencyTypes);
+        final int[] freqScalars = resources.getIntArray(R.array.frequencyScalars);
+        if (freqArray.length != freqTypes.length || freqArray.length != freqScalars.length) {
+            new Exception("Frequency arrays are not all equal length."
+                    + " frequency: " + freqArray.length
+                    + " frequencyTypes: " + freqTypes.length
+                    + " frequencyScalars: " + freqScalars.length);
+        }
+
+        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setMax(freqArray.length - 1);
+        final TextView frequencyText = (TextView) findViewById(R.id.frequencyDescription);
 
         Cursor dbCursor = mDbHelper.fetchContact(rowId);
-        int freqType = dbCursor.getInt(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_FREQUENCY_TYPE));
-        int freqScalar = dbCursor.getInt(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_FREQUENCY_SCALAR));
+        int freqTypeIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_FREQUENCY_TYPE);
+        int freqScalarIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_FREQUENCY_SCALAR);
+        int dbFreqType = dbCursor.getInt(freqTypeIndex);
+        int dbFreqScalar = dbCursor.getInt(freqScalarIndex);
 
-        Spinner fScalarSpinner = (Spinner) findViewById(R.id.fScalarSpinner);
-        ArrayAdapter<CharSequence> scalarAdapter = ArrayAdapter.createFromResource(this,
-                R.array.number_array, R.layout.date_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        scalarAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        fScalarSpinner.setAdapter(scalarAdapter);
-        fScalarSpinner.setSelection(freqScalar - 1); // Index is one less than value, since 0-indexed
-        fScalarSpinner.setOnItemSelectedListener(this);
-
-        Spinner fTypeSpinner = (Spinner) findViewById(R.id.fTypeSpinner);
-        if (freqScalar > 1) {
-            fTypeSpinner.setAdapter(mTypePluralAdapter);
-        } else {
-            fTypeSpinner.setAdapter(mTypeAdapter);
+        int index = 0;
+        for ( ; freqTypes[index] != dbFreqType || freqScalars[index] != dbFreqScalar; index++) {
+            // nothing really. Looking for the right index value.
         }
-        // Apply the adapter to the spinner
-        fTypeSpinner.setSelection(freqType);
-        fTypeSpinner.setOnItemSelectedListener(this);
+        frequencyText.setText(freqArray[index]);
+        seekBar.setProgress(index);
 
-//        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
-//        final String[] freqArray = getResources().getStringArray(R.array.frequency);
-//        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-//                Log.v("SeekBar", i + " " + b);
-//                // TODO(ak) this doesn't quite work. actually think about it for a bit
-//                int window = (int) Math.ceil(100.0 / (freqArray.length - 1));
-//                setTitle(freqArray[i/window]);
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//                Log.v("SeekBar", "onStartTrackingTouch");
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//                Log.v("SeekBar", "onStopTrackingTouch");
-//            }
-//        });
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                mDbHelper.updateContactFrequency(rowId, freqTypes[i], freqScalars[i]);
+
+                frequencyText.setText(freqArray[i]);
+                Cursor c = mDbHelper.fetchContact(rowId);
+                long nextContact = c.getLong(c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
+                updateNextContactTextView(nextContact);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
 
         int lastContactIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED);
         final long lastContact = dbCursor.getLong(lastContactIndex);
@@ -207,24 +210,12 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             }
         });
 
-        if (isNew) {
-            fTypeSpinner.postDelayed(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            Spinner typeSpinner = (Spinner) findViewById(R.id.fTypeSpinner);
-                            typeSpinner.performClick();
-                        }
-                    },
-                    DateUtils.SECOND_IN_MILLIS);
-        }
-
         dbCursor.close();
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onResume() {
+        super.onResume();
         Long updatedTime = mLastContactUpdater.updateContact(this, mDbHelper, rowId);
         if (updatedTime != null) {
             updateLastContactTextView(updatedTime);
@@ -235,28 +226,39 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
     }
 
     public void updateTimingTextView(TextView textView, Long newTime) {
-        if (newTime == null || newTime == 0) {
-            textView.setText(R.string.unknown_time);
-            textView.setGravity(Gravity.CENTER);
-            return;
-        } else {
-            textView.setGravity(Gravity.NO_GRAVITY);
-        }
-
         CharSequence lastContactString =
                 RelativeDateUtils.getRelativeTimeSpanString(newTime, System.currentTimeMillis());
         textView.setText(lastContactString);
         textView.setTag(R.id.view_time_millis, new Long(newTime));
+        textView.setTypeface(Typeface.DEFAULT);
     }
 
     public void updateLastContactTextView(Long lastContact) {
         TextView tvLastContact = (TextView) findViewById(R.id.lastContact);
-        updateTimingTextView(tvLastContact, lastContact);
+        if (lastContact == null || lastContact == 0) {
+            tvLastContact.setText(R.string.unknown_time);
+        } else {
+            updateTimingTextView(tvLastContact, lastContact);
+        }
     }
 
     public void updateNextContactTextView(Long nextContact) {
-        TextView tvLastContact = (TextView) findViewById(R.id.nextContact);
-        updateTimingTextView(tvLastContact, nextContact);
+        TextView tvNextContact = (TextView) findViewById(R.id.nextContact);
+        updateTimingTextView(tvNextContact, nextContact);
+
+        if (nextContact == null || nextContact == 0) {
+            tvNextContact.setText("ASAP");
+        } else {
+            updateTimingTextView(tvNextContact, nextContact);
+        }
+
+        TextView tvClockIcon = (TextView) findViewById(R.id.nextDescriptionIcon);
+        if (nextContact == null || nextContact == 0 || nextContact < System.currentTimeMillis()) {
+            tvClockIcon.setTextColor(MainActivity.ALARM_ICON_COLOR);
+        } else {
+            tvClockIcon.setTextColor(MainActivity.LOW_PRIORITY_CLOCK_COLOR);
+        }
+
     }
 
     public void updateLastContact(long lastContact, int contactType) {
@@ -310,40 +312,6 @@ public class EntryDetailsActivity extends ActionBarActivity implements AdapterVi
             }
             mParentView.setTag(R.id.view_time_millis, new Long(calendar.getTimeInMillis()));
         }
-    }
-
-
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        if (view == null) {
-            return;
-        }
-        // Update to the frequency type
-        if (R.id.fTypeSpinner == adapterView.getId()) {
-            // Get the complimentary value
-            Spinner freqScalar = (Spinner) findViewById(R.id.fScalarSpinner);
-            // Type constant values correspond to their position in the selector. Scalar values
-            // are off by one.
-            mDbHelper.updateContactFrequency(rowId, i, freqScalar.getSelectedItemPosition() + 1);
-        }
-
-        if (R.id.fScalarSpinner == adapterView.getId()) {
-            // Get the complimentary value
-            Spinner freqType = (Spinner) findViewById(R.id.fTypeSpinner);
-            // Type constant values correspond to their position in the selector. Scalar values
-            // are off by one.
-            mDbHelper.updateContactFrequency(rowId, freqType.getSelectedItemPosition(), i + 1);
-        }
-
-        Cursor c = mDbHelper.fetchContact(rowId);
-        long nextContact = c.getLong(c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
-        updateNextContactTextView(nextContact);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-        Log.e("EntryDetailsActivity", "onNothingSelected called on " + adapterView);
     }
 
     @Override

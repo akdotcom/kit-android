@@ -27,11 +27,81 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/lastContactIcon"
+            android:layout_alignBaseline="@id/lastContactIcon"
+            style="@style/OptionText"
+            android:text="@string/last_in_touch"
+            android:textColor="#999999"
+            android:id="@+id/lastContactDescription" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:padding="10sp"
             style="@style/OptionText"
+            android:text="@string/icon_comments"
+            android:textColor="#CC3366FF"
+            android:id="@+id/lastContactIcon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/lastContactIcon"
+            android:layout_alignBaseline="@id/lastContactIcon"
+            android:minWidth="100dp"
+            style="@style/OptionText"
+            android:text="LAST CONTACT"
+            android:textColor="#999999"
+            android:id="@+id/lastContact" />
+
+        <!--android:background="#EBF0FF"-->
+        <!--android:padding="4sp"-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_toLeftOf="@+id/nextDescriptionIcon"
+            android:layout_alignBaseline="@id/nextDescriptionIcon"
+            style="@style/OptionText"
+            android:text="@string/next_in_touch"
+            android:textColor="#999999"
+            android:id="@+id/nextDescription" />
+        <!--android:layout_alignLeft="@+id/lastContactDescription"-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lastContactIcon"
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="10sp"
+            android:paddingRight="10sp"
+            style="@style/OptionText"
+            android:text="@string/icon_clock"
+            android:textColor="#CCFF5050"
+            android:id="@+id/nextDescriptionIcon" />
+
+        <TextView
+            android:id="@+id/nextContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/nextDescriptionIcon"
+            android:layout_alignBaseline="@id/nextDescriptionIcon"
+            android:minWidth="100dp"
+            android:paddingBottom="5sp"
+            android:text="NEXT CONTACT"
+            android:textColor="#999999"
+            style="@style/OptionText" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/nextDescriptionIcon"
+            android:padding="10sp"
+            style="@style/OptionText"
             android:text="@string/icon_refresh"
-            android:textColor="#33CC33"
+            android:textColor="#CC33CC33"
             android:id="@+id/kitEveryIcon" />
 
         <TextView
@@ -43,97 +113,29 @@
             android:text="@string/keep_in_touch_every"
             android:id="@+id/kitEvery" />
 
-        <Spinner
-            android:layout_width="wrap_content"
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/kitEveryIcon"
-            android:layout_alignBaseline="@id/kitEveryIcon"
-            android:background="#EBFAEB"
-            android:id="@+id/fScalarSpinner" />
-        <!--<View-->
-        <!--android:layout_width="4sp"-->
-        <!--android:layout_height="0sp"-->
-        <!--android:id="@+id/seperater" />-->
-        <Spinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/fScalarSpinner"
-            android:layout_alignBaseline="@id/kitEveryIcon"
-            android:layout_marginLeft="6sp"
-            android:background="#EBFAEB"
-            android:id="@+id/fTypeSpinner" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/lastContactIcon"
-            android:layout_alignBaseline="@id/lastContactIcon"
-            style="@style/OptionText"
-            android:text="@string/last_in_touch"
-            android:id="@+id/lastContactDescription" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_below="@id/kitEveryIcon"
-            android:padding="10sp"
-            style="@style/OptionText"
-            android:text="@string/icon_comments"
-            android:textColor="#3366FF"
-            android:id="@+id/lastContactIcon" />
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="center_horizontal" />
 
         <TextView
+            android:id="@+id/frequencyDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/lastContactIcon"
-            android:layout_alignBaseline="@id/lastContactIcon"
-            android:minWidth="100dp"
             style="@style/OptionText"
-            android:text="LAST CONTACT"
-            android:padding="4sp"
-            android:background="#EBF0FF"
-            android:id="@+id/lastContact" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_toLeftOf="@+id/nextDescriptionIcon"
-            android:layout_alignBaseline="@id/nextDescriptionIcon"
-            style="@style/OptionText"
-            android:text="@string/next_in_touch"
-            android:id="@+id/nextDescription" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/lastContactIcon"
-            android:layout_centerHorizontal="true"
-            android:padding="10sp"
-            style="@style/OptionText"
-            android:text="@string/icon_clock"
-            android:textColor="#FF5050"
-            android:id="@+id/nextDescriptionIcon" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/nextDescriptionIcon"
-            android:layout_alignBaseline="@id/nextDescriptionIcon"
-            android:minWidth="100dp"
-            android:text="NEXT CONTACT"
-            style="@style/OptionText"
-            android:background="#FFEEEE"
-            android:padding="4sp"
-            android:id="@+id/nextContact" />
+            android:layout_toRightOf="@id/kitEveryIcon"
+            android:layout_alignBaseline="@id/kitEveryIcon"/>
 
     </RelativeLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:minWidth="185dp"
         android:text="@string/icon_check"
         android:id="@+id/buttonDone"
@@ -144,66 +146,5 @@
         android:paddingTop="0dp"
         android:clickable="true"
         android:enabled="true" />
-
-    <!--<SeekBar-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/seekBar"-->
-        <!--android:layout_gravity="center_horizontal" />-->
-
-    <!--<LinearLayout-->
-            <!--android:orientation="horizontal"-->
-            <!--android:paddingLeft="?android:attr/listPreferredItemPaddingStart"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentLeft="true"-->
-            <!--android:layout_alignParentStart="true">-->
-
-
-        <!--<Button-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="Set to now"-->
-            <!--android:id="@+id/resetButton"-->
-            <!--android:layout_toRightOf="@+id/nextContact"-->
-            <!--android:layout_below="@+id/spinner"-->
-            <!--android:focusable="false"-->
-            <!--android:focusableInTouchMode="false"-->
-            <!--android:layout_centerHorizontal="true" />-->
-
-    <!--</LinearLayout>-->
-
-    <!--<ImageView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:scaleType="centerCrop"-->
-        <!--android:minHeight="200dp"-->
-        <!--android:id="@+id/detailImage"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentLeft="true"-->
-        <!--android:layout_alignParentStart="true"-->
-    <!--/>-->
-
-
-    <!--<LinearLayout-->
-        <!--android:orientation="horizontal"-->
-        <!--android:paddingLeft="?android:attr/listPreferredItemPaddingStart"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:layout_alignParentLeft="true" >-->
-
-
-    <!--</LinearLayout>-->
-
-    <!--<LinearLayout-->
-        <!--android:orientation="horizontal"-->
-        <!--android:paddingLeft="?android:attr/listPreferredItemPaddingStart"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:layout_alignParentLeft="true" >-->
-
-<!--</LinearLayout>-->
 
     </LinearLayout>

@@ -55,7 +55,7 @@
             android:layout_height="@dimen/listItemHeight"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:background="#FF5050"
+            android:background="#CCFF5050"
             android:visibility="gone"
             >
             <TextView
@@ -87,7 +87,7 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
             android:gravity="right"
-            android:background="#3366FF"
+            android:background="#CC3366FF"
             android:visibility="gone"
             >
             <TextView

@@ -54,10 +54,13 @@ public class MainActivity extends ActionBarActivity implements
 
     public static final int LOW_PRIORITY_TEXT_COLOR = Color.parseColor("#666666");
     public static final int LOW_PRIORITY_CLOCK_COLOR = Color.parseColor("#999999");
-    public static final int ALARM_ICON_COLOR = Color.parseColor("#FF5050");
+    public static final int ALARM_ICON_COLOR = Color.parseColor("#CCFF5050");
 
+    // Default background color for lists in Holo.Light. Obtained by calling
+    //    int[] attributes = { android.R.attr.colorBackground };
+    //    TypedArray array = getTheme().obtainStyledAttributes(attributes);
 
-    public static Integer DEFAULT_BACKGROUND_COLOR = null;
+    public static final int DEFAULT_BACKGROUND_COLOR = -789517;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,16 +72,9 @@ public class MainActivity extends ActionBarActivity implements
         mDbHelper.open();
 
         mUpdater = new LastContactUpdater();
-//        mUpdater.update(this, mDbHelper); // This now happens in onResume
+//        mUpdater.update(this, mDbHelper); // This now happens in onStart
 
         mContactsCache = new ContactsCache(this);
-
-        if (DEFAULT_BACKGROUND_COLOR == null) {
-            int[] attributes = { android.R.attr.colorBackground };
-            TypedArray array = getTheme().obtainStyledAttributes(attributes);
-            DEFAULT_BACKGROUND_COLOR = array.getColor(0, Color.WHITE);
-        }
-
 
         ComponentName receiver = new ComponentName(this, PeriodicUpdater.class);
         PackageManager pm = this.getPackageManager();
@@ -160,6 +156,9 @@ public class MainActivity extends ActionBarActivity implements
                             startActivity(intent);
                         }
                     });
+
+                    // Do this, otherwise the default is sometimes transparent
+//                    view.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
                 } else {
                     viewHolder = (ViewHolder) view.getTag(R.id.view_holder);
                 }
@@ -200,9 +199,9 @@ public class MainActivity extends ActionBarActivity implements
                     }
                 } else {
                     if (isAlertingAlready) {
-                        view.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-                        viewHolder.contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
                         viewHolder.nextDescription.setTextColor(LOW_PRIORITY_CLOCK_COLOR);
+                        viewHolder.contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
+                        view.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
                     }
                 }
 
@@ -257,8 +256,8 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         // Explicitly hide these in case they've been left visible
         findViewById(R.id.snoozeBackground).setVisibility(View.INVISIBLE);
         findViewById(R.id.talkedBackground).setVisibility(View.INVISIBLE);

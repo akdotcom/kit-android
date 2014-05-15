@@ -248,6 +248,8 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                 mDownView = null;
                 mDownPosition = ListView.INVALID_POSITION;
                 mSwiping = false;
+                mBackgroundView.findViewById(R.id.snoozeBackground).setVisibility(View.INVISIBLE);
+                mBackgroundView.findViewById(R.id.talkedBackground).setVisibility(View.INVISIBLE);
                 break;
             }
 
