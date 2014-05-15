@@ -18,14 +18,8 @@ package com.lastinitial.kit;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.SystemClock;
-import android.text.format.DateUtils;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -33,9 +27,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;

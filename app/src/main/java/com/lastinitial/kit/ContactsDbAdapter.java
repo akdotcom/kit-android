@@ -259,6 +259,7 @@ public class ContactsDbAdapter {
         int freqType = cursor.getInt(cursor.getColumnIndex(KEY_FREQUENCY_TYPE));
         int freqScalar = cursor.getInt(cursor.getColumnIndex(KEY_FREQUENCY_SCALAR));
         long nextContact = calculateNextContact(lastContacted, freqType, freqScalar);
+        cursor.close();
 
         args.put(KEY_NEXT_CONTACT, nextContact);
 
@@ -292,6 +293,8 @@ public class ContactsDbAdapter {
         args.put(KEY_FREQUENCY_SCALAR, frequencyScalar);
 
         long lastContacted = cursor.getLong(lastContactedIndex);
+        cursor.close();
+
         long nextContact = calculateNextContact(lastContacted, frequencyType, frequencyScalar);
         args.put(KEY_NEXT_CONTACT, nextContact);
 

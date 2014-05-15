@@ -1,7 +1,6 @@
 package com.lastinitial.kit;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.pm.ApplicationInfo;
 
 import com.google.android.gms.analytics.HitBuilders;

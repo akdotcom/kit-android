@@ -11,19 +11,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
-import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.QuickContactBadge;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -118,8 +114,6 @@ public class EntryDetailsActivity extends ActionBarActivity {
             return;
         }
 
-
-        boolean isNew = false;
         if (rowId == -1L) {
             // Create database entry, default frequency = 1 month.
             rowId = mDbHelper.createContact(
@@ -131,8 +125,6 @@ public class EntryDetailsActivity extends ActionBarActivity {
 
             // Initialize last contacted time.
             mLastContactUpdater.updateContact(this, mDbHelper, rowId);
-
-            isNew = true;
         }
 
         // We're done with the system contact information, so close the cursor.
@@ -174,6 +166,7 @@ public class EntryDetailsActivity extends ActionBarActivity {
                 frequencyText.setText(freqArray[i]);
                 Cursor c = mDbHelper.fetchContact(rowId);
                 long nextContact = c.getLong(c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
+                c.close();
                 updateNextContactTextView(nextContact);
             }
 
@@ -221,6 +214,7 @@ public class EntryDetailsActivity extends ActionBarActivity {
             updateLastContactTextView(updatedTime);
             Cursor c = mDbHelper.fetchContact(rowId);
             int nextContactIndex = c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
+            c.close();
             updateNextContactTextView(c.getLong(nextContactIndex));
         }
     }
