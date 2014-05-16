@@ -110,8 +110,8 @@ public class MainActivity extends ActionBarActivity implements
         TextView talkedIcon = (TextView)listBackground.findViewById(R.id.talkedIcon);
         talkedIcon.setTypeface(FontUtils.getFontAwesome(this));
 
-        ((TextView) findViewById(R.id.leftArrow)).setTypeface(FontUtils.getFontAwesome(this));
-        ((TextView) findViewById(R.id.rightArrow)).setTypeface(FontUtils.getFontAwesome(this));
+        ((TextView) findViewById(R.id.snoozeIconSwipeEdu)).setTypeface(FontUtils.getFontAwesome(this));
+        ((TextView) findViewById(R.id.talkedIconSwipeEdu)).setTypeface(FontUtils.getFontAwesome(this));
 
         final ListView listView = (ListView) findViewById(R.id.entriesList);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -284,6 +284,7 @@ public class MainActivity extends ActionBarActivity implements
                     swipeEduView.setVisibility(View.GONE);
                 } else {
                     Log.v("MainActivity", "Showing Swipe EDU only because in DEBUG mode");
+                    swipeEduView.setVisibility(View.VISIBLE);
                 }
             } else {
                 swipeEduView.setVisibility(View.VISIBLE);

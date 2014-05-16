@@ -179,43 +179,61 @@
         android:layout_below="@id/listEndSeperater"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
->
-
-        <TextView
-            android:id="@+id/leftArrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:textColor="#CC3366FF"
-            android:textSize="40sp"
-            android:text="@string/icon_leftarrow"
-            />
-
-        <TextView
-            android:id="@+id/rightArrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_alignParentRight="true"
-            android:textColor="#CCFF5050"
-            android:textSize="40sp"
-            android:text="@string/icon_rightarrow"
-            />
+        android:layout_marginRight="20dp" >
 
         <TextView
             android:id="@+id/swipeEduText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/leftArrow"
-            android:layout_toLeftOf="@id/rightArrow"
-            android:layout_alignTop="@id/leftArrow"
-            android:layout_alignBottom="@id/leftArrow"
-            android:gravity="center"
+            android:gravity="left"
             android:textSize="20sp"
             android:textColor="#999999"
             android:text="@string/swipe_edu"/>
+        <TextView
+            android:id="@+id/snoozeIconSwipeEdu"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/swipeEduText"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:textColor="#CCFF5050"
+            android:textSize="20sp"
+            android:text="@string/icon_clock"
+            />
 
+        <TextView
+            android:id="@+id/swipeEduTextLeft"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/swipeEduText"
+            android:layout_toRightOf="@id/snoozeIconSwipeEdu"
+            android:layout_alignBaseline="@id/snoozeIconSwipeEdu"
+            android:textSize="20sp"
+            android:textColor="#999999"
+            android:text="@string/swipe_edu_left"/>
+
+        <TextView
+            android:id="@+id/talkedIconSwipeEdu"
+            android:layout_width="40dp"
+            android:layout_height="@dimen/listItemHeight"
+            android:layout_below="@id/swipeEduTextLeft"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:textColor="#CC3366FF"
+            android:textSize="20sp"
+            android:text="@string/icon_comments"
+            />
+
+        <TextView
+            android:id="@+id/swipeEduTextRight"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/listItemHeight"
+            android:layout_below="@id/swipeEduTextLeft"
+            android:layout_toRightOf="@id/talkedIconSwipeEdu"
+            android:layout_alignBaseline="@id/talkedIconSwipeEdu"
+            android:textSize="20sp"
+            android:textColor="#999999"
+            android:text="@string/swipe_edu_right"/>
     </RelativeLayout>
 
 </RelativeLayout>
