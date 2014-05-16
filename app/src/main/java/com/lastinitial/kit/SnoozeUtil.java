@@ -3,6 +3,7 @@ package com.lastinitial.kit;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -41,10 +42,17 @@ public class SnoozeUtil extends IntentService {
 
     public synchronized void snoozeContact(Context context, long rowId, long snoozeTime) {
         ContactsDbAdapter contactsDbAdapter = new ContactsDbAdapter(context);
-
         contactsDbAdapter.open();
 
-        long nextContact = System.currentTimeMillis() + snoozeTime;
+        Cursor c = contactsDbAdapter.fetchContact(rowId);
+        long nextContact = c.getLong(c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
+        c.close();
+        long now = System.currentTimeMillis();
+        if (nextContact < now) {
+            nextContact = now;
+        }
+
+        nextContact += snoozeTime;
         contactsDbAdapter.updateNextContact(rowId, nextContact);
 
         contactsDbAdapter.close();
