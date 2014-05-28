@@ -104,7 +104,7 @@ public class PeriodicUpdater extends BroadcastReceiver {
         }
 
         if (ids.size() == 1) {
-            notificationBuilder.setContentTitle("Stitch: " + names.get(0));
+            notificationBuilder.setContentTitle("Stitch with " + names.get(0));
             // Contacts were returned in order of nextContact descending, so if there's only one
             // person to notify on, it's the first contact in the list.
             dbCursor.moveToFirst();
