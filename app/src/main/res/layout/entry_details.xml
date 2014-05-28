@@ -55,6 +55,35 @@
             android:textColor="#999999"
             android:id="@+id/lastContact" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/lastContactIcon"
+            android:paddingLeft="10sp"
+            android:paddingRight="10sp"
+            style="@style/OptionText"
+            android:text="@string/icon_refresh"
+            android:textColor="#CC33CC33"
+            android:id="@+id/kitEveryIcon" />
+
+        <TextView
+            android:id="@+id/frequencyDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/OptionText"
+            android:layout_toRightOf="@id/kitEveryIcon"
+            android:layout_alignBaseline="@id/kitEveryIcon"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/kitEveryIcon"
+            android:layout_alignBaseline="@id/kitEveryIcon"
+            style="@style/OptionText"
+            android:text="@string/keep_in_touch_every"
+            android:id="@+id/kitEvery" />
+
         <!--android:background="#EBF0FF"-->
         <!--android:padding="4sp"-->
         <TextView
@@ -72,10 +101,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/lastContactIcon"
+            android:layout_below="@+id/kitEveryIcon"
             android:layout_centerHorizontal="true"
-            android:paddingLeft="10sp"
-            android:paddingRight="10sp"
+            android:padding="10dp"
             style="@style/OptionText"
             android:text="@string/icon_clock"
             android:textColor="#CCFF5050"
@@ -93,42 +121,14 @@
             android:textColor="#999999"
             style="@style/OptionText" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/nextDescriptionIcon"
-            android:padding="10sp"
-            style="@style/OptionText"
-            android:text="@string/icon_refresh"
-            android:textColor="#CC33CC33"
-            android:id="@+id/kitEveryIcon" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/kitEveryIcon"
-            android:layout_alignBaseline="@id/kitEveryIcon"
-            style="@style/OptionText"
-            android:text="@string/keep_in_touch_every"
-            android:id="@+id/kitEvery" />
-
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/kitEveryIcon"
+            android:layout_below="@id/nextDescriptionIcon"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_gravity="center_horizontal" />
-
-        <TextView
-            android:id="@+id/frequencyDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/OptionText"
-            android:layout_toRightOf="@id/kitEveryIcon"
-            android:layout_alignBaseline="@id/kitEveryIcon"/>
 
     </RelativeLayout>
 
