@@ -59,11 +59,16 @@ img.screenshot {
 #download {
   margin-left:auto;
   margin-right:auto;
+  margin-top: 2em;
   max-width: 800px;
   font-size: 1.25em;
 /*
   width:172px;
  */
+}
+
+#download-button {
+  margin-top: 0.5em;
 }
 
 @media screen and (min-width: 768px){
