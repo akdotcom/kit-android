@@ -128,8 +128,9 @@
         android:layout_alignBottom="@+id/entriesList"
         android:background="#CCCCCC" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/nudge"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/listEndSeperater"
@@ -144,10 +145,16 @@
             android:textColor="#333333"
             android:text="@string/nudge_cta"/>
         <TextView
+            android:id="@+id/nudgeContinued"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textColor="#333333"
+            android:text="@string/nudge_continued"/>
+        <TextView
             android:id="@+id/nudgeSuggestions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/nudgeCta"
             android:layout_marginTop="20sp"
             android:textSize="20sp"
             android:textColor="#333333"
@@ -156,24 +163,26 @@
             android:id="@+id/nudgeExplanation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/nudgeSuggestions"
             android:layout_marginTop="20sp"
             android:textSize="20sp"
             android:textColor="#333333"
             android:text="@string/nudge_explanation"/>
-        <TextView
-            android:id="@+id/nudgeCloser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/nudgeExplanation"
-            android:layout_marginTop="20sp"
-            android:textSize="20sp"
-            android:textColor="#333333"
-            android:text="@string/nudge_closer"/>
-    </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/nudgeEduCloser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/listEndSeperater"
+        android:layout_margin="30dp"
+        android:gravity="left"
+        android:textSize="20sp"
+        android:textColor="#333333"
+        android:text="@string/nudge_edu_closer"/>
 
     <RelativeLayout
         android:id="@+id/swipeEDU"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/listEndSeperater"

@@ -35,7 +35,8 @@ public class MainActivity extends ActionBarActivity implements
 
     public static final String DETAILS_DB_ROWID = "com.lastinitial.kit.DETAILS_DB_ROWID";
 
-    public static final String HAS_SWIPED = "HAS_SWPIED";
+    public static final String HAS_SWIPED = "HAS_SWIPED";
+    public static final String HAS_SHOWN_NUDGE_EDU_3 = "HAS_SHOWN_NUDGE_EDU_3";
     public static final String EDU_INFO_PREFS = "EDU_INFO_PREFS";
 
     public static final int FREQUENCY_DAILY = 0;
@@ -268,27 +269,62 @@ public class MainActivity extends ActionBarActivity implements
 
         // If there are no contacts, show the nudge, and maybe the swipe EDU.
         View nudgeView = findViewById(R.id.nudge);
-        View swipeEduView = findViewById(R.id.swipeEDU);
-        if (mDbHelper.numContacts() == 0) {
+//        View swipeEduView = findViewById(R.id.swipeEDU);
+        View nudgeCtaView = findViewById(R.id.nudgeCta);
+        View nudgeContinuedView = findViewById(R.id.nudgeContinued);
+        View nudgeEduCloserView = findViewById(R.id.nudgeEduCloser);
+
+        long numContacts = mDbHelper.numContacts();
+        if (numContacts == 0) {
+//            swipeEduView.setVisibility(View.GONE);
             nudgeView.setVisibility(View.VISIBLE);
-            swipeEduView.setVisibility(View.GONE);
-        } else {
+            nudgeEduCloserView.setVisibility(View.GONE);
+
+            nudgeCtaView.setVisibility(View.VISIBLE);
+            nudgeContinuedView.setVisibility(View.GONE);
+        } else if (numContacts == 1) {
+//            swipeEduView.setVisibility(View.GONE);
+            nudgeView.setVisibility(View.VISIBLE);
+            nudgeEduCloserView.setVisibility(View.GONE);
+
+            nudgeCtaView.setVisibility(View.GONE);
+            nudgeContinuedView.setVisibility(View.VISIBLE);
+        }
+        else {
             nudgeView.setVisibility(View.GONE);
 
             SharedPreferences prefs = getSharedPreferences(EDU_INFO_PREFS, 0 /* MODE_PRIVATE */);
-            boolean hasSwiped = prefs.getBoolean(HAS_SWIPED, false);
-            if (hasSwiped) {
+            boolean hasShownNudgeEdu3 = prefs.getBoolean(HAS_SHOWN_NUDGE_EDU_3, false);
+            if (hasShownNudgeEdu3) {
                 boolean isRelease =
                         (0 == (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
                 if (isRelease) {
-                    swipeEduView.setVisibility(View.GONE);
+                    nudgeEduCloserView.setVisibility(View.GONE);
                 } else {
-                    Log.v("MainActivity", "Showing Swipe EDU only because in DEBUG mode");
-                    swipeEduView.setVisibility(View.VISIBLE);
+                    Log.v("MainActivity", "Showing Nudge EDU 3 only because in DEBUG mode");
+                    nudgeEduCloserView.setVisibility(View.VISIBLE);
                 }
             } else {
-                swipeEduView.setVisibility(View.VISIBLE);
+                nudgeEduCloserView.setVisibility(View.VISIBLE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putBoolean(HAS_SHOWN_NUDGE_EDU_3, true);
+                editor.commit();
             }
+
+//            SharedPreferences prefs = getSharedPreferences(EDU_INFO_PREFS, 0 /* MODE_PRIVATE */);
+//            boolean hasSwiped = prefs.getBoolean(HAS_SWIPED, false);
+//            if (hasSwiped) {
+//                boolean isRelease =
+//                        (0 == (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
+//                if (isRelease) {
+//                    swipeEduView.setVisibility(View.GONE);
+//                } else {
+//                    Log.v("MainActivity", "Showing Swipe EDU only because in DEBUG mode");
+//                    swipeEduView.setVisibility(View.VISIBLE);
+//                }
+//            } else {
+//                swipeEduView.setVisibility(View.VISIBLE);
+//            }
         }
 
         mUpdater.update(this, mDbHelper);

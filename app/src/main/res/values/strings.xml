@@ -33,13 +33,14 @@
     <string name="button_done">Done</string>
     <string name="notification_snooze">Snooze</string>
     <string name="feedback_email_subject">Stitch feedback</string>
-    <string name="nudge_cta">Tap above to start adding the people you want to stay in touch with. For example:</string>
+    <string name="nudge_cta">Howdy! Tap above to start adding the people you want to stay in touch with. For example:</string>
+    <string name="nudge_continued">Nice! Let\'s keep going. Who else?</string>
     <string name="nudge_explanation">Stitch will keep an eye on your phone calls and text messages to remind you if too much time has passed since you last talked.</string>
-    <string name="nudge_closer">Happy stitching!</string>
     <string name="nudge_suggestions">• Grandparents\n• Far away friends\n• Friends from school\n• Ex-coworkers</string>
     <string name="swipe_edu">Pro tip: Swipe for quick actions</string>
     <string name="swipe_edu_left">Swipe right to snooze the reminder for 3 days</string>
     <string name="swipe_edu_right">Swipe left to reset the timer if you talked today IRL</string>
+    <string name="nudge_edu_closer">Looks like you\'ve got the hang of this — I\'ll leave you to it.\n\nHappy stitching!</string>
     <string name="icon_clock">&#xf017;</string>
     <string name="icon_refresh">&#xf021;</string>
     <string name="icon_comments">&#xf086;</string>
