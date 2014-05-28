@@ -206,8 +206,8 @@ public class MainActivity extends ActionBarActivity implements
                     if (isAlertingAlready) {
                         viewHolder.nextDescription.setTextColor(LOW_PRIORITY_CLOCK_COLOR);
                         viewHolder.contactName.setTextColor(LOW_PRIORITY_TEXT_COLOR);
-                        view.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
                     }
+                    view.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
                 }
 
                 final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
@@ -301,7 +301,7 @@ public class MainActivity extends ActionBarActivity implements
                 if (isRelease) {
                     nudgeEduCloserView.setVisibility(View.GONE);
                 } else {
-                    Log.v("MainActivity", "Showing Nudge EDU 3 only because in DEBUG mode");
+                    Log.v("MainActivity", "Showing Nudge EDU closer only because in DEBUG mode");
                     nudgeEduCloserView.setVisibility(View.VISIBLE);
                 }
             } else {
