@@ -38,7 +38,7 @@
     <string name="swipe_edu">Pro tip: Swipe for quick actions</string>
     <string name="swipe_edu_left">Swipe right to snooze the reminder for 3 days</string>
     <string name="swipe_edu_right">Swipe left to reset the timer if you talked today IRL</string>
-    <string name="nudge_edu_closer">Looks like you\'ve got the hang of this — I\'ll leave you to it.\n\nHappy stitching!</string>
+    <string name="nudge_edu_closer">Looks like you\'ve got the hang of this! You can add as many people as you\'d like — I\'ll leave you to it.\n\nHappy stitching!</string>
     <string name="icon_clock">&#xf017;</string>
     <string name="icon_refresh">&#xf021;</string>
     <string name="icon_comments">&#xf086;</string>
