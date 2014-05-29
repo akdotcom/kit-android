@@ -1,5 +1,5 @@
 <menu
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.lastinitial.kit.About" >
+    tools:context="com.lastinitial.stitch.About" >
     
 </menu>

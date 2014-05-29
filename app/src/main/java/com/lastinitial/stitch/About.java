@@ -1,4 +1,4 @@
-package com.lastinitial.kit;
+package com.lastinitial.stitch;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -58,7 +58,7 @@ public class About extends Activity {
 
     public void rate(View view) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("market://details?id=com.lastinitial.kit"));
+        intent.setData(Uri.parse("market://details?id=com.lastinitial.stitch"));
         startActivity(intent);
     }
 }

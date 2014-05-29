@@ -6,10 +6,10 @@
     <bool name="ga_autoActivityTracking">true</bool>
 
     <!-- The screen names that will appear in reports -->
-    <screenName name="com.lastinitial.kit.MainActivity">
+    <screenName name="com.lastinitial.stitch.MainActivity">
         KIT MainActivity
     </screenName>
-    <screenName name="com.lastinitial.kit.EntryDetailsActivity">
+    <screenName name="com.lastinitial.stitch.EntryDetailsActivity">
         KIT EntryDetailsActivity
     </screenName>
     <!--  The following value should be replaced with correct property id. -->

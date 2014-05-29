@@ -1,4 +1,4 @@
-package com.lastinitial.kit;
+package com.lastinitial.stitch;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -41,7 +41,7 @@ public class EntryDetailsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.entry_details);
 
-        AnalyticsUtil.logScreenImpression(this, "com.lastinitial.kit.EntryDetailsActivity");
+        AnalyticsUtil.logScreenImpression(this, "com.lastinitial.stitch.EntryDetailsActivity");
 
         mTypeAdapter = ArrayAdapter.createFromResource(this,
                 R.array.frequency_unit_array, R.layout.date_spinner_item);

@@ -13,10 +13,10 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:name="com.lastinitial.kit.KitApplication"
+        android:name="com.lastinitial.stitch.KitApplication"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name="com.lastinitial.stitch.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -26,29 +26,29 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".EntryDetailsActivity"
+            android:name="com.lastinitial.stitch.EntryDetailsActivity"
             android:label="@string/title_activity_entry"
             android:screenOrientation="portrait"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName="com.lastinitial.stitch.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
 
         <receiver
-            android:name=".PeriodicUpdater"
+            android:name="com.lastinitial.stitch.PeriodicUpdater"
             android:enabled="false" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".SnoozeUtil" />
+        <service android:name="com.lastinitial.stitch.SnoozeUtil" />
 
         <activity
-            android:name=".About"
+            android:name="com.lastinitial.stitch.About"
             android:label="@string/title_activity_about"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName="com.lastinitial.stitch.MainActivity"
             android:screenOrientation="portrait" >
             <!--<meta-data-->
                 <!--android:name="android.support.PARENT_ACTIVITY"-->

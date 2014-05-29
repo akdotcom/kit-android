@@ -1,4 +1,4 @@
-package com.lastinitial.kit;
+package com.lastinitial.stitch;
 
 import android.app.IntentService;
 import android.content.Context;
@@ -11,7 +11,7 @@ import android.util.Log;
  * Created by ak on 4/30/14.
  */
 public class SnoozeUtil extends IntentService {
-    protected static final String ACTION_SNOOZE = "com.lastinitial.kit.SNOOZE";
+    protected static final String ACTION_SNOOZE = "com.lastinitial.stitch.SNOOZE";
 
     protected static final long DEFAULT_SNOOZE_TIME = 3L * DateUtils.DAY_IN_MILLIS;
 

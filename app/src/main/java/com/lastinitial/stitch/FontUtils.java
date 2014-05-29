@@ -1,4 +1,4 @@
-package com.lastinitial.kit;
+package com.lastinitial.stitch;
 
 import android.content.Context;
 import android.graphics.Typeface;

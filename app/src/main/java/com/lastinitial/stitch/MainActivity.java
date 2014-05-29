@@ -1,7 +1,6 @@
-package com.lastinitial.kit;
+package com.lastinitial.stitch;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.LoaderManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,7 +13,6 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.support.v7.app.ActionBarActivity;
@@ -22,8 +20,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -33,7 +29,7 @@ import android.widget.TextView;
 public class MainActivity extends ActionBarActivity implements
         LoaderManager.LoaderCallbacks<Cursor>{
 
-    public static final String DETAILS_DB_ROWID = "com.lastinitial.kit.DETAILS_DB_ROWID";
+    public static final String DETAILS_DB_ROWID = "com.lastinitial.stitch.DETAILS_DB_ROWID";
 
     public static final String HAS_SWIPED = "HAS_SWIPED";
     public static final String HAS_SHOWN_NUDGE_EDU_3 = "HAS_SHOWN_NUDGE_EDU_3";
@@ -70,7 +66,7 @@ public class MainActivity extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AnalyticsUtil.logScreenImpression(this, "com.lastinitial.kit.MainActivity");
+        AnalyticsUtil.logScreenImpression(this, "com.lastinitial.stitch.MainActivity");
 
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();

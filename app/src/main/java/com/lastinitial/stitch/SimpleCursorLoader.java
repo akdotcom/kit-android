@@ -1,4 +1,4 @@
-package com.lastinitial.kit;
+package com.lastinitial.stitch;
 
 /*
  * Copyright 2012 CodeSlap - Cristian Castiblanco

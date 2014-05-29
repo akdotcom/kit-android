@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.lastinitial.kit;
+package com.lastinitial.stitch;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
