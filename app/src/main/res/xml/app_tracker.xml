@@ -7,10 +7,10 @@
 
     <!-- The screen names that will appear in reports -->
     <screenName name="com.lastinitial.stitch.MainActivity">
-        KIT MainActivity
+        Stitch MainActivity
     </screenName>
     <screenName name="com.lastinitial.stitch.EntryDetailsActivity">
-        KIT EntryDetailsActivity
+        Stitch EntryDetailsActivity
     </screenName>
     <!--  The following value should be replaced with correct property id. -->
     <string name="ga_trackingId">UA-49847728-2</string>

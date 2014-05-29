@@ -15,7 +15,7 @@ public class AnalyticsUtil {
         boolean isRelease =
                 (0 == (activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
         if (isRelease) {
-            Tracker t = ((KitApplication) activity.getApplication()).getTracker();
+            Tracker t = ((StitchApplication) activity.getApplication()).getTracker();
             t.setScreenName(screenName);
             // Send a screen view.
             t.send(new HitBuilders.AppViewBuilder().build());

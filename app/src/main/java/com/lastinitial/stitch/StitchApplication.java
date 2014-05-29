@@ -8,7 +8,7 @@ import com.google.android.gms.analytics.Tracker;
 /**
  * Created by ak on 4/21/14.
  */
-public class KitApplication extends Application {
+public class StitchApplication extends Application {
 
     Tracker mTracker = null;
 
