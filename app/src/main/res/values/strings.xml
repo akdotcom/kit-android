@@ -26,8 +26,6 @@
     <string name="menu_run_notifications">Run notifications</string>
     <string name="menu_about">Feedback</string>
     <string name="title_activity_about">Feedback</string>
-    <string name="about_text1">Hi! My name is Akshay. I write apps to make people’s lives better. No advertising, no upgrades, no tricks.</string>
-    <string name="about_text2">KIT uses data found on many but not all Android phones. If you have a problem, please send me information about your device and Android version using the feedback button below.</string>
     <string name="button_feedback">Send an e-mail</string>
     <string name="button_rate">Rate on Google Play</string>
     <string name="button_done">Done</string>
