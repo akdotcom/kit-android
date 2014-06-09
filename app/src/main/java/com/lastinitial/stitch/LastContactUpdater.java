@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
@@ -74,48 +75,66 @@ public class LastContactUpdater {
                 new String[] { Long.toString(lastUpdate) },
                 CallLog.Calls.DATE + " DESC");
 
-        int numberIndex = callCursor.getColumnIndex(CallLog.Calls.NUMBER);
-        int contactTimeIndex = callCursor.getColumnIndex(CallLog.Calls.DATE);
+        if (callCursor != null) {
+            int numberIndex = callCursor.getColumnIndex(CallLog.Calls.NUMBER);
+            int contactTimeIndex = callCursor.getColumnIndex(CallLog.Calls.DATE);
 
-        processTelephonyCursor(
-                resolver,
-                contactsDb,
-                callCursor,
-                numberIndex,
-                contactTimeIndex,
-                MainActivity.CONTACT_TYPE_CALL,
-                dbKeysIdsLc);
+            processTelephonyCursor(
+                    resolver,
+                    contactsDb,
+                    callCursor,
+                    numberIndex,
+                    contactTimeIndex,
+                    MainActivity.CONTACT_TYPE_CALL,
+                    dbKeysIdsLc);
 
-        callCursor.close();
+            callCursor.close();
+        }
 
+        // Use hard coded content URIs because the Telephony APIs are v19+ only
+        // TODO(ak): can we do this in a better way with API checks?
         String[] smsProjection = {
                 "address", "date"
         };
 
-        // Use hard coded content URIs because the Telephony APIs are v19+ only
-        Uri messageByPhoneUri = Uri.parse("content://mms-sms/conversations");
+        Uri messageByPhoneUri = null;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            // Use hard coded content URIs because the Telephony APIs are v19+ only
+            messageByPhoneUri = Uri.parse("content://mms-sms/conversations");
+        } else {
+            messageByPhoneUri = Telephony.MmsSms.CONTENT_CONVERSATIONS_URI;
+        }
 
-        Cursor smsCursor = resolver.query(
-                messageByPhoneUri,
-                smsProjection,
-                "date > " + Long.toString(lastUpdate),
-                null,
-                "date DESC");
+        // Put this in try/catch because some phones (e.g. HTC One) don't seem to handle our
+        // hack nicely and spit an NPE.
+        Cursor smsCursor = null;
+        try {
+            smsCursor = resolver.query(
+                    messageByPhoneUri,
+                    smsProjection,
+                    "date > " + Long.toString(lastUpdate),
+                    null,
+                    "date DESC");
+        } catch (NullPointerException e) {
+            Log.e("LastContactUpdater",
+                    "Unable to query resolver for " + messageByPhoneUri.toString());
+        }
 
+        if (smsCursor != null) {
+            int numberIndex = smsCursor.getColumnIndex(smsProjection[0]);
+            int contactTimeIndex = smsCursor.getColumnIndex(smsProjection[1]);
 
-        numberIndex = smsCursor.getColumnIndex(Telephony.Sms.ADDRESS);
-        contactTimeIndex = smsCursor.getColumnIndex(Telephony.Sms.DATE);
+            processTelephonyCursor(
+                    resolver,
+                    contactsDb,
+                    smsCursor,
+                    numberIndex,
+                    contactTimeIndex,
+                    MainActivity.CONTACT_TYPE_SMS,
+                    dbKeysIdsLc);
 
-        processTelephonyCursor(
-                resolver,
-                contactsDb,
-                smsCursor,
-                numberIndex,
-                contactTimeIndex,
-                MainActivity.CONTACT_TYPE_SMS,
-                dbKeysIdsLc);
-
-        smsCursor.close();
+            smsCursor.close();
+        }
     }
 
     protected void processTelephonyCursor(
@@ -136,6 +155,11 @@ public class LastContactUpdater {
             String number = telephonyCursor.getString(numIndex);
             Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
             Cursor contactCursor = resolver.query(uri, keyProjection, null, null, null);
+
+            if (contactCursor == null) {
+                // Didn't find them. Sad.
+                return;
+            }
 
             // If there's a corresponding contact
             if (contactCursor.moveToFirst()) {
@@ -183,7 +207,7 @@ public class LastContactUpdater {
                 Contacts._ID,
         };
         Cursor c = resolver.query(res, lookupFields, null, null, null);
-        if (!c.moveToFirst()) {
+        if (c == null || !c.moveToFirst()) {
             // Contact not found via lookup key
             return null;
         }
@@ -197,9 +221,11 @@ public class LastContactUpdater {
                 null,
                 null);
         List<String> numbers = new ArrayList<String>();
-        int numberIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        while (phoneCursor.moveToNext()) {
-            numbers.add(phoneCursor.getString(numberIndex));
+        if (phoneCursor != null) {
+            int numberIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            while (phoneCursor.moveToNext()) {
+                numbers.add(phoneCursor.getString(numberIndex));
+            }
         }
 
 
@@ -213,13 +239,13 @@ public class LastContactUpdater {
                             " AND " + CallLog.Calls.DURATION + " > 15",
                     null,
                     CallLog.Calls.DATE + " DESC");
-            if (cursor.moveToFirst()) {
+            if (cursor != null && cursor.moveToFirst()) {
                 newLastContacted = cursor.getLong(cursor.getColumnIndex(CallLog.Calls.DATE));
                 Log.v("LastContactUpdater/updateContact", "new lastContacted: " + newLastContacted);
                 contactsDb.updateLastContacted(
                         rowId, newLastContacted, MainActivity.CONTACT_TYPE_CALL);
+                cursor.close();
             }
-            cursor.close();
         }
 
         // For all the numbers, check if there's been a recent text message.
@@ -234,13 +260,13 @@ public class LastContactUpdater {
                     "date > " + newLastContacted,
                     null,
                     "date DESC");
-            if (smsCursor.moveToFirst()) {
+            if (smsCursor != null && smsCursor.moveToFirst()) {
                 newLastContacted = smsCursor.getLong(smsCursor.getColumnIndex("date"));
                 Log.v("LastContactUpdater/updateContact", "new lastContacted: " + newLastContacted);
                 contactsDb.updateLastContacted(
                         rowId, newLastContacted, MainActivity.CONTACT_TYPE_SMS);
+                smsCursor.close();
             }
-            smsCursor.close();
         }
 
         if (newLastContacted != dbLastContacted) {
