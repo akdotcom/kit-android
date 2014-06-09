@@ -214,8 +214,8 @@ public class EntryDetailsActivity extends ActionBarActivity {
             updateLastContactTextView(updatedTime);
             Cursor c = mDbHelper.fetchContact(rowId);
             int nextContactIndex = c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
-            c.close();
             updateNextContactTextView(c.getLong(nextContactIndex));
+            c.close();
         }
     }
 
