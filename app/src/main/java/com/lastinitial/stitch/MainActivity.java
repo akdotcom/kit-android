@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +25,7 @@ import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.TextView;
 
-public class MainActivity extends ActionBarActivity implements
+public class MainActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>{
 
     public static final String DETAILS_DB_ROWID = "com.lastinitial.stitch.DETAILS_DB_ROWID";

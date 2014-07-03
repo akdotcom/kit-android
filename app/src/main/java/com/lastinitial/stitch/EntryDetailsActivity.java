@@ -1,5 +1,6 @@
 package com.lastinitial.stitch;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -10,7 +11,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.Contacts;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +26,7 @@ import android.widget.Toast;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class EntryDetailsActivity extends ActionBarActivity {
+public class EntryDetailsActivity extends Activity {
 
     private ContactsDbAdapter mDbHelper;
     private LastContactUpdater mLastContactUpdater;
