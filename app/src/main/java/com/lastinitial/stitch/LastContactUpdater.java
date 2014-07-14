@@ -153,6 +153,12 @@ public class LastContactUpdater {
         while (telephonyCursor.moveToNext()) {
             // Lookup contact based on number
             String number = telephonyCursor.getString(numIndex);
+            if (number == null || number.isEmpty()) {
+                // Not sure why this might happen, but seeing some crash reports that seem to
+                // indicate that it might.
+                // Caused by: java.lang.IllegalArgumentException: URI: content://com.android.contacts/phone_lookup/, calling user: com.lastinitial.stitch, calling package:com.lastinitial.stitch
+                continue;
+            }
             Uri uri = Uri.withAppendedPath(PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
             Cursor contactCursor = resolver.query(uri, keyProjection, null, null, null);
 
