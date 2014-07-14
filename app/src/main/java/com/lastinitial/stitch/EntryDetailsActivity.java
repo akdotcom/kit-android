@@ -178,27 +178,27 @@ public class EntryDetailsActivity extends Activity {
         });
 
         int lastContactIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED);
-        final long lastContact = dbCursor.getLong(lastContactIndex);
+        long lastContact = dbCursor.getLong(lastContactIndex);
         updateLastContactTextView(lastContact);
 
-        final View lastContactInfo = findViewById(R.id.lastContact);
+        View lastContactInfo = findViewById(R.id.lastContact);
         lastContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment newFragment = new DatePickerFragment(lastContactInfo);
+                DialogFragment newFragment = DatePickerFragment.newInstance(R.id.lastContact);
                 newFragment.show(getFragmentManager(), "datePicker");
             }
         });
 
         int nextContactIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
-        final long nextContact = dbCursor.getLong(nextContactIndex);
+        long nextContact = dbCursor.getLong(nextContactIndex);
         updateNextContactTextView(nextContact);
 
-        final View nextContactInfo = findViewById(R.id.nextContact);
+        View nextContactInfo = findViewById(R.id.nextContact);
         nextContactInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DialogFragment newFragment = new DatePickerFragment(nextContactInfo);
+                DialogFragment newFragment = DatePickerFragment.newInstance(R.id.nextContact);
                 newFragment.show(getFragmentManager(), "datePicker");
             }
         });
@@ -271,17 +271,26 @@ public class EntryDetailsActivity extends Activity {
 
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
-        View mParentView;
 
-        public DatePickerFragment(View textView) {
-            mParentView = textView;
+        private static final String PARENT_VIEW_ID_KEY = "parentViewID";
+
+        public static DatePickerFragment newInstance(int viewId) {
+            DatePickerFragment dpf = new DatePickerFragment();
+
+            // Supply index input as an argument.
+            Bundle args = new Bundle();
+            args.putInt(PARENT_VIEW_ID_KEY, viewId);
+            dpf.setArguments(args);
+
+            return dpf;
         }
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
             Calendar c = Calendar.getInstance();
-            Object tagTime = mParentView.getTag(R.id.view_time_millis);
+            View parentView = getParentView();
+            Object tagTime = parentView.getTag(R.id.view_time_millis);
             if (tagTime != null) {
                 Long tagTimeLong = (Long) tagTime;
                 if (tagTimeLong != 0L) {
@@ -301,13 +310,19 @@ public class EntryDetailsActivity extends Activity {
             Log.v("DatePickerFragment", "Date picked");
             Calendar calendar = new GregorianCalendar(year, month, day);
             EntryDetailsActivity activity = (EntryDetailsActivity) getActivity();
-            if (mParentView.getId() == R.id.lastContact) {
+            View parentView = getParentView();
+            if (parentView.getId() == R.id.lastContact) {
                 activity.updateLastContact(
                         calendar.getTimeInMillis(), MainActivity.CONTACT_TYPE_MANUAL);
-            } else if (mParentView.getId() == R.id.nextContact) {
+            } else if (parentView.getId() == R.id.nextContact) {
                 activity.updateNextContact(calendar.getTimeInMillis());
             }
-            mParentView.setTag(R.id.view_time_millis, new Long(calendar.getTimeInMillis()));
+            parentView.setTag(R.id.view_time_millis, new Long(calendar.getTimeInMillis()));
+        }
+
+        private View getParentView() {
+            int parentViewId = getArguments().getInt(PARENT_VIEW_ID_KEY);
+            return getActivity().findViewById(parentViewId);
         }
     }
 
