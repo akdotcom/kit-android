@@ -283,7 +283,10 @@ public class EntryDetailsActivity extends Activity {
             Calendar c = Calendar.getInstance();
             Object tagTime = mParentView.getTag(R.id.view_time_millis);
             if (tagTime != null) {
-                c.setTimeInMillis((Long)tagTime);
+                Long tagTimeLong = (Long) tagTime;
+                if (tagTimeLong != 0L) {
+                    c.setTimeInMillis((Long)tagTime);
+                }
             }
             int year = c.get(Calendar.YEAR);
             int month = c.get(Calendar.MONTH);
