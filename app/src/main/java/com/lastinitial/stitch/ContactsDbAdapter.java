@@ -333,6 +333,11 @@ public class ContactsDbAdapter {
             String lookupKey = cursor.getString(cursor.getColumnIndex(KEY_LOOKUP_KEY));
             final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
             Uri res = ContactsContract.Contacts.lookupContact(resolver, lookupUri);
+            if (res == null) {
+                // Phone can't find this contact.
+                // TODO(ak): Remove the contact from the DB?
+                continue;
+            }
             Cursor c = resolver.query(res, lookupFields, null, null, null);
             if (c.moveToFirst()) {
                 String newKey = c.getString(c.getColumnIndex(Contacts.LOOKUP_KEY));
