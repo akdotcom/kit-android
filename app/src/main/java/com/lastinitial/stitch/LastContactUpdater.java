@@ -199,11 +199,17 @@ public class LastContactUpdater {
     public Long updateContact(Context context, ContactsDbAdapter contactsDb, long rowId) {
         Log.v("LastContactUpdater", "updateContact called");
         Cursor dbCursor = contactsDb.fetchContact(rowId);
+        // Got a report of CursorIndexOutOfBoundsException: Index 0 requested, with a size of 0.
+        // Hopefully this avoids it?
+        if (dbCursor == null || dbCursor.isAfterLast()) {
+            return null;
+        }
         long dbLastContacted = dbCursor.getLong(
-                dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LAST_CONTACTED));
+                dbCursor.getColumnIndexOrThrow(ContactsDbAdapter.KEY_LAST_CONTACTED));
         String dbLookupKey = dbCursor.getString(
-                dbCursor.getColumnIndex(ContactsDbAdapter.KEY_LOOKUP_KEY));
+                dbCursor.getColumnIndexOrThrow(ContactsDbAdapter.KEY_LOOKUP_KEY));
         long newLastContacted = dbLastContacted;
+        dbCursor.close();
 
         // Fetch the user's system contact ID
         final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, dbLookupKey);
