@@ -215,6 +215,10 @@ public class LastContactUpdater {
         final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, dbLookupKey);
         ContentResolver resolver = context.getContentResolver();
         Uri res = Contacts.lookupContact(resolver, lookupUri);
+        if (res == null) {
+            // Contact no longer exists in the address book but is still in the Stitch DB
+            return null;
+        }
         String[] lookupFields = {
                 Contacts._ID,
         };
