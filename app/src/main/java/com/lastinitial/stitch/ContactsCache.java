@@ -63,6 +63,10 @@ public class ContactsCache {
     private void populateCache(String lookupKey) {
         final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
         Uri res = Contacts.lookupContact(mContentResolver, lookupUri);
+        if (res == null) {
+            // TODO(ak): if this contact isn't found, should we remove them from the DB?
+            return;
+        }
         String[] lookupFields = {
                 Contacts._ID,
                 Contacts.DISPLAY_NAME,
@@ -76,5 +80,6 @@ public class ContactsCache {
             }
             NAMES.put(lookupKey, c.getString(c.getColumnIndex(Contacts.DISPLAY_NAME)));
         }
+        c.close();
     }
 }
