@@ -150,10 +150,12 @@ public class MainActivity extends Activity implements
                         @Override
                         public void onClick(View view) {
                             Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
+                            Long rowId = (Long) view.getTag(R.id.view_db_rowid);
                             Intent intent = new Intent(
                                     getApplicationContext(),
                                     EntryDetailsActivity.class);
                             intent.setData(contactUri);
+                            intent.putExtra(DETAILS_DB_ROWID, rowId);
                             intent.setAction(Intent.ACTION_MAIN);
                             startActivity(intent);
                         }
@@ -204,6 +206,10 @@ public class MainActivity extends Activity implements
                     }
                     view.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
                 }
+
+                int rowIdIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID);
+                long rowId = cursor.getLong(rowIdIndex);
+                viewHolder.contactOptions.setTag(R.id.view_db_rowid, rowId);
 
                 final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
                 view.setTag(R.id.view_lookup_uri, lookupUri);
