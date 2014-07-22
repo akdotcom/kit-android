@@ -392,7 +392,7 @@ public class MainActivity extends Activity implements
         if (id == R.id.action_run_notifications) {
             Intent intent = new Intent(this, PeriodicUpdater.class);
             sendBroadcast(intent);
-        } else if (id == R.id.action_about) {
+        } else if (id == R.id.action_feedback) {
             Intent intent = new Intent(this, About.class);
             startActivity(intent);
         }

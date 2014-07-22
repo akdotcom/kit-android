@@ -24,7 +24,7 @@
     <string name="asap">ASAP</string>
     <string name="unknown_italic"><i>Unknown</i></string>
     <string name="menu_run_notifications">Run notifications</string>
-    <string name="menu_about">Feedback</string>
+    <string name="menu_feedback">Feedback</string>
     <string name="title_activity_about">Feedback</string>
     <string name="button_feedback">Send an e-mail</string>
     <string name="button_rate">Rate on Google Play</string>
