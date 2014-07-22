@@ -26,6 +26,7 @@
     <string name="menu_run_notifications">Run notifications</string>
     <string name="menu_feedback">Feedback</string>
     <string name="title_activity_feedback">Feedback</string>
+    <string name="menu_share">Share</string>
     <string name="button_feedback">Send an e-mail</string>
     <string name="button_rate">Rate on Google Play</string>
     <string name="button_done">Done</string>
@@ -39,6 +40,7 @@
     <string name="swipe_edu_left">Swipe right to snooze the reminder for 3 days</string>
     <string name="swipe_edu_right">Swipe left to reset the timer if you talked today IRL</string>
     <string name="nudge_edu_closer">Looks like you\'ve got the hang of this! You can add as many people as you\'d like — I\'ll leave you to it.\n\nHappy stitching!</string>
+    <string name="share_text">Let\'s stay in touch! Check out Stitch: http://lastinitial.com/stitch</string>
     <string name="icon_clock">&#xf017;</string>
     <string name="icon_refresh">&#xf021;</string>
     <string name="icon_comments">&#xf086;</string>

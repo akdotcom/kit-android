@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements
@@ -51,6 +52,7 @@ public class MainActivity extends Activity implements
     private ResourceCursorAdapter mAdapter;
     private LastContactUpdater mUpdater = new LastContactUpdater();
     private ContactsCache mContactsCache;
+    private ShareActionProvider mShareActionProvider;
 
     public static final int LOW_PRIORITY_TEXT_COLOR = Color.parseColor("#666666");
     public static final int LOW_PRIORITY_CLOCK_COLOR = Color.parseColor("#999999");
@@ -380,9 +382,28 @@ public class MainActivity extends Activity implements
             MenuItem notifications = menu.findItem(R.id.action_run_notifications);
             notifications.setVisible(false);
         }
+
+        // Locate MenuItem with ShareActionProvider
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+        // Fetch and store ShareActionProvider
+        mShareActionProvider = new ShareActionProvider(this);
+        item.setActionProvider(mShareActionProvider);
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_text));
+        shareIntent.setType("text/plain");
+        setShareIntent(shareIntent);
+
         return true;
     }
 
+    // Call to update the share intent
+    private void setShareIntent(Intent shareIntent) {
+        if (mShareActionProvider != null) {
+            mShareActionProvider.setShareIntent(shareIntent);
+        }
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
