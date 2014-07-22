@@ -50,7 +50,7 @@
 
         <activity
             android:name="com.lastinitial.stitch.About"
-            android:label="@string/title_activity_about"
+            android:label="@string/title_activity_feedback"
             android:parentActivityName="com.lastinitial.stitch.MainActivity"
             android:screenOrientation="portrait" >
             <!--<meta-data-->
