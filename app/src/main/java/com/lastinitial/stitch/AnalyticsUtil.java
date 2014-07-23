@@ -2,6 +2,7 @@ package com.lastinitial.stitch;
 
 import android.app.Activity;
 import android.content.pm.ApplicationInfo;
+import android.util.Log;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -19,6 +20,24 @@ public class AnalyticsUtil {
             t.setScreenName(screenName);
             // Send a screen view.
             t.send(new HitBuilders.AppViewBuilder().build());
+        } else {
+            Log.v("AnalyticsUtil", "Skipping analytics call for screenName: " + screenName);
         }
+    }
+
+    public static void logAction(Activity activity, String category, String actionName) {
+        boolean isRelease =
+                (0 == (activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
+        if (isRelease) {
+            Tracker t = ((StitchApplication) activity.getApplication()).getTracker();
+            t.send(new HitBuilders.EventBuilder()
+                    .setCategory(category)
+                    .setAction(actionName)
+                    .build());
+        } else {
+            Log.v("AnalyticsUtil",
+                  "Skipping analytics call for category: " + category + ", action: " + actionName);
+        }
+
     }
 }
