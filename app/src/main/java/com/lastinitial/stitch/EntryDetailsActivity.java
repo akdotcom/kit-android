@@ -349,6 +349,7 @@ public class EntryDetailsActivity extends Activity {
         if (rowId != -1L) {
             mDbHelper.deleteContact(rowId);
         }
+        AnalyticsUtil.logAction(this, "contacts", "entry-details-remove-contact");
         finish();
     }
 
