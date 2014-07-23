@@ -25,6 +25,7 @@ import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>{
@@ -241,10 +242,18 @@ public class MainActivity extends Activity implements
                                                 getApplicationContext(),
                                                 itemId,
                                                 SnoozeUtil.DEFAULT_SNOOZE_TIME);
+                                        AnalyticsUtil.logAction(
+                                                MainActivity .this,
+                                                "contacts",
+                                                "main-activity-swipe-snooze");
                                     } else {
                                         mDbHelper.updateLastContacted(itemId,
                                                 System.currentTimeMillis(),
                                                 CONTACT_TYPE_MANUAL);
+                                        AnalyticsUtil.logAction(
+                                                MainActivity .this,
+                                                "contacts",
+                                                "main-activity-swipe-talked-today");
                                     }
                                 }
                                 // Todo(ak): This is gross. Because the ResourceCursorAdapter
@@ -387,6 +396,17 @@ public class MainActivity extends Activity implements
         MenuItem item = menu.findItem(R.id.menu_item_share);
         // Fetch and store ShareActionProvider
         mShareActionProvider = new ShareActionProvider(this);
+        // Tell analytics if someone hits the share button
+        mShareActionProvider.setOnShareTargetSelectedListener(
+                new ShareActionProvider.OnShareTargetSelectedListener() {
+                    @Override
+                    public boolean onShareTargetSelected(ShareActionProvider shareActionProvider,
+                                                         Intent intent) {
+                        AnalyticsUtil.logAction(
+                                MainActivity .this, "sharing", "main-activity-action-bar");
+                        return false;
+                    }
+                });
         item.setActionProvider(mShareActionProvider);
 
         Intent shareIntent = new Intent();
@@ -417,6 +437,7 @@ public class MainActivity extends Activity implements
             Intent intent = new Intent(this, About.class);
             startActivity(intent);
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -425,6 +446,8 @@ public class MainActivity extends Activity implements
     }
 
     public void addContact() {
+        AnalyticsUtil.logAction(this, "contacts", "main-activity-add-contact-bar");
+
         Intent pickContactIntent = new Intent( Intent.ACTION_PICK, Contacts.CONTENT_FILTER_URI );
         pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
         startActivityForResult(pickContactIntent, 1);
