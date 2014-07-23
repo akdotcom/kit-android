@@ -52,8 +52,7 @@ public class About extends Activity {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("message/rfc822");
         intent.putExtra(Intent.EXTRA_EMAIL, new String[] {"ak@lastinitial.com"});
-        intent.putExtra(
-                Intent.EXTRA_SUBJECT,getResources().getString(R.string.feedback_email_subject));
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_email_subject));
         startActivity(intent);
     }
 
