@@ -29,7 +29,7 @@
     <string name="menu_share">Share</string>
     <string name="button_feedback">Send an e-mail</string>
     <string name="button_rate">Rate on Google Play</string>
-    <string name="button_done">Done</string>
+    <string name="button_done">Set</string>
     <string name="notification_snooze">Snooze</string>
     <string name="feedback_email_subject">Stitch feedback</string>
     <string name="nudge_cta">Howdy! Tap above to start adding the people you want to stay in touch with. For example:</string>
