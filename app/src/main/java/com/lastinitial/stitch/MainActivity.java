@@ -321,7 +321,7 @@ public class MainActivity extends Activity implements
                 nudgeEduCloserView.setVisibility(View.VISIBLE);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putBoolean(HAS_SHOWN_NUDGE_EDU_3, true);
-                editor.commit();
+                editor.apply();
             }
 
 //            SharedPreferences prefs = getSharedPreferences(EDU_INFO_PREFS, 0 /* MODE_PRIVATE */);

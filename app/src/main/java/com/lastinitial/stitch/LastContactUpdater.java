@@ -40,7 +40,7 @@ public class LastContactUpdater {
         }
         long now = System.currentTimeMillis();
         update(context, contactsDb, lastUpdate);
-        prefs.edit().putLong(LAST_UPDATE_KEY, now).commit();
+        prefs.edit().putLong(LAST_UPDATE_KEY, now).apply();
     }
 
     private void update(Context context, ContactsDbAdapter contactsDb, long lastUpdate) {

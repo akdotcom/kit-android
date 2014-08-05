@@ -258,7 +258,7 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                     if (!prefs.getBoolean(MainActivity.HAS_SWIPED, false)) {
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putBoolean(MainActivity.HAS_SWIPED, true);
-                        editor.commit();
+                        editor.apply();
                     }
                 }
 
