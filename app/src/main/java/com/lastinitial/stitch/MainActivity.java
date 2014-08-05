@@ -275,6 +275,7 @@ public class MainActivity extends Activity implements
     @Override
     protected void onStart() {
         super.onStart();
+
         // Explicitly hide these in case they've been left visible
         findViewById(R.id.snoozeBackground).setVisibility(View.INVISIBLE);
         findViewById(R.id.talkedBackground).setVisibility(View.INVISIBLE);
@@ -338,11 +339,9 @@ public class MainActivity extends Activity implements
 //                swipeEduView.setVisibility(View.VISIBLE);
 //            }
         }
-
         mUpdater.update(this, mDbHelper);
-        getLoaderManager().restartLoader(CONTACTS_LOADER, null, this);
+        getLoaderManager().restartLoader(CONTACTS_LOADER, null, MainActivity.this);
     }
-
 
     @Override
     public Loader<Cursor> onCreateLoader(int loaderID, Bundle bundle)
