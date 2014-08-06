@@ -59,7 +59,6 @@ public class EntryDetailsActivity extends Activity {
         tvFrequencyIcon.setTypeface(FontUtils.getFontAwesome(this));
         tvNextContactIcon.setTypeface(FontUtils.getFontAwesome(this));
 //        bDoneIcon.setTypeface(FontUtils.getFontAwesome(this));
-        bDoneIcon.setText("Done");
 
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();

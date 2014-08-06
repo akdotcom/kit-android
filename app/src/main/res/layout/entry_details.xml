@@ -137,7 +137,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:minWidth="185dp"
-        android:text="@string/icon_check"
+        android:text="@string/button_done"
         android:id="@+id/buttonDone"
         style="@style/OptionText"
         android:layout_gravity="center_horizontal"
