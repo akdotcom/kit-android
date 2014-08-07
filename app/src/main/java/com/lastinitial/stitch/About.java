@@ -23,6 +23,8 @@ public class About extends Activity {
 
         button = (Button) findViewById(R.id.emailButton);
         button.setTypeface(FontUtils.getFontAwesome(this));
+
+        AnalyticsUtil.logScreenImpression(this, "com.lastinitial.stitch.About");
     }
 
 
