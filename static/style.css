@@ -25,6 +25,10 @@ h1 {
   font-weight:normal;
 }
 
+a.blacklink {
+  color: #222;
+}
+
 #screenshots {
   margin-left:auto;
   margin-right:auto;
