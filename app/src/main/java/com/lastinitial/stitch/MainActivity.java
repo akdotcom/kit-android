@@ -449,6 +449,9 @@ public class MainActivity extends Activity implements
 
         Intent pickContactIntent = new Intent( Intent.ACTION_PICK, Contacts.CONTENT_FILTER_URI );
         pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+        // This way selects by contact, not by phone number.
+        // TODO(ak): Is that OK to do before we support e-mail?
+//        Intent pickContactIntent = new Intent( Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
         startActivityForResult(pickContactIntent, 1);
     }
 
