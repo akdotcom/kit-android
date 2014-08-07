@@ -13,9 +13,7 @@ import com.google.android.gms.analytics.Tracker;
 public class AnalyticsUtil {
 
     public static void logScreenImpression(Activity activity, String screenName) {
-        boolean isRelease =
-                (0 == (activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
-        if (isRelease) {
+        if (isRelease(activity)) {
             Tracker t = ((StitchApplication) activity.getApplication()).getTracker();
             t.setScreenName(screenName);
             // Send a screen view.
@@ -26,9 +24,7 @@ public class AnalyticsUtil {
     }
 
     public static void logAction(Activity activity, String category, String actionName) {
-        boolean isRelease =
-                (0 == (activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
-        if (isRelease) {
+        if (isRelease(activity)) {
             Tracker t = ((StitchApplication) activity.getApplication()).getTracker();
             t.send(new HitBuilders.EventBuilder()
                     .setCategory(category)
@@ -38,6 +34,9 @@ public class AnalyticsUtil {
             Log.v("AnalyticsUtil",
                   "Skipping analytics call for category: " + category + ", action: " + actionName);
         }
+    }
 
+    private static boolean isRelease(Activity activity) {
+        return (0 == (activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
     }
 }
