@@ -16,6 +16,10 @@ import android.provider.ContactsContract.Contacts;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +53,31 @@ public class PeriodicUpdater extends BroadcastReceiver {
         LastContactUpdater lastContactUpdater = new LastContactUpdater();
         ContactsDbAdapter contactsDb = new ContactsDbAdapter(context);
         contactsDb.open();
+
+        long numContacts = (int) contactsDb.numContacts();
+
+        // Normally this logic would live inside of AnalyticsUtil / StitchApplication, but the
+        // PeriodicUpdater doesn't necessarily run inside of the Application, so it can't rely
+        // on there being an instance of the Application available.
+        if (AnalyticsUtil.isRelease(context)) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(context);
+            Tracker tracker = analytics.newTracker(R.xml.app_tracker);
+            tracker.send(new HitBuilders.EventBuilder()
+                    .setCategory("heartbeats")
+                    .setAction("numContacts")
+                    .setValue(numContacts)
+                    .build());
+        } else {
+            Notification.Builder notificationBuilder = new Notification.Builder(context)
+                    .setSmallIcon(R.drawable.notification_icon)
+                    .setAutoCancel(true)
+                    .setPriority(Notification.PRIORITY_LOW);
+
+            notificationBuilder.setContentTitle("Would ping with " + Long.toString(numContacts) + " contacts");
+            notificationBuilder.setContentText("But I didn't because you're in debug mode!");
+            Notification notification = notificationBuilder.build();
+            notificationManager.notify(1, notification);
+        }
 
         lastContactUpdater.update(context, contactsDb);
         Cursor dbCursor = contactsDb.fetchAllContacts();
