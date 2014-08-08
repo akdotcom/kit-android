@@ -1,6 +1,7 @@
 package com.lastinitial.stitch;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
@@ -36,7 +37,12 @@ public class AnalyticsUtil {
         }
     }
 
-    private static boolean isRelease(Activity activity) {
+    public static boolean isRelease(Activity activity) {
         return (0 == (activity.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
     }
+
+    public static boolean isRelease(Context context) {
+        return (0 == (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
+    }
+
 }
