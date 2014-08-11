@@ -67,16 +67,6 @@ public class PeriodicUpdater extends BroadcastReceiver {
                     .setAction("numContacts")
                     .setValue(numContacts)
                     .build());
-        } else {
-            Notification.Builder notificationBuilder = new Notification.Builder(context)
-                    .setSmallIcon(R.drawable.notification_icon)
-                    .setAutoCancel(true)
-                    .setPriority(Notification.PRIORITY_LOW);
-
-            notificationBuilder.setContentTitle("Would ping with " + Long.toString(numContacts) + " contacts");
-            notificationBuilder.setContentText("But I didn't because you're in debug mode!");
-            Notification notification = notificationBuilder.build();
-            notificationManager.notify(1, notification);
         }
 
         lastContactUpdater.update(context, contactsDb);
