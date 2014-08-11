@@ -334,11 +334,11 @@ public class SwipeDismissListViewTouchListener implements View.OnTouchListener {
                     mBackgroundView.setTranslationY(mDownView.getTop());
                     if (dir != mSwipeDirection) {
                         if (dir == SwipeDirection.RIGHT) {
-                            mBackgroundView.findViewById(R.id.snoozeBackground).setVisibility(View.VISIBLE);
-                            mBackgroundView.findViewById(R.id.talkedBackground).setVisibility(View.INVISIBLE);
-                        } else {
                             mBackgroundView.findViewById(R.id.snoozeBackground).setVisibility(View.INVISIBLE);
                             mBackgroundView.findViewById(R.id.talkedBackground).setVisibility(View.VISIBLE);
+                        } else {
+                            mBackgroundView.findViewById(R.id.snoozeBackground).setVisibility(View.VISIBLE);
+                            mBackgroundView.findViewById(R.id.talkedBackground).setVisibility(View.INVISIBLE);
                         }
                         mSwipeDirection = dir;
                     }

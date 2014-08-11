@@ -237,6 +237,14 @@ public class MainActivity extends Activity implements
                                 for (int position : reverseSortedPositions) {
                                     long itemId = mAdapter.getItemId(position);
                                     if (isDismissRight) {
+                                        mDbHelper.updateLastContacted(itemId,
+                                                System.currentTimeMillis(),
+                                                CONTACT_TYPE_MANUAL);
+                                        AnalyticsUtil.logAction(
+                                                MainActivity .this,
+                                                "contacts",
+                                                "main-activity-swipe-talked-today");
+                                    } else {
                                         SnoozeUtil snoozeUtil = new SnoozeUtil();
                                         snoozeUtil.snoozeContact(
                                                 getApplicationContext(),
@@ -246,14 +254,6 @@ public class MainActivity extends Activity implements
                                                 MainActivity .this,
                                                 "contacts",
                                                 "main-activity-swipe-snooze");
-                                    } else {
-                                        mDbHelper.updateLastContacted(itemId,
-                                                System.currentTimeMillis(),
-                                                CONTACT_TYPE_MANUAL);
-                                        AnalyticsUtil.logAction(
-                                                MainActivity .this,
-                                                "contacts",
-                                                "main-activity-swipe-talked-today");
                                     }
                                 }
                                 // Todo(ak): This is gross. Because the ResourceCursorAdapter

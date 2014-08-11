@@ -50,43 +50,11 @@
         android:layout_below="@id/addBar"
         >
         <RelativeLayout
-            android:id="@+id/snoozeBackground"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/listItemHeight"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:background="#CCFF5050"
-            android:visibility="gone"
-            >
-            <TextView
-                android:id="@+id/snoozeIcon"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/listItemHeight"
-                android:gravity="center_vertical"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:layout_alignParentStart="true"
-                android:text="@string/icon_clock"
-                />
-            <TextView
-                android:id="@+id/snoozeText"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/listItemHeight"
-                android:gravity="center_vertical"
-                android:textColor="@android:color/white"
-                android:layout_toRightOf="@+id/snoozeIcon"
-                android:layout_marginLeft="6sp"
-                android:textSize="20sp"
-                android:text="@string/notification_snooze"
-                />
-            </RelativeLayout>
-        <RelativeLayout
             android:id="@+id/talkedBackground"
             android:layout_width="match_parent"
             android:layout_height="@dimen/listItemHeight"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
-            android:gravity="right"
             android:background="#CC3366FF"
             android:visibility="gone"
             >
@@ -97,7 +65,7 @@
                 android:gravity="center_vertical"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
-                android:layout_alignParentEnd="true"
+                android:layout_alignParentStart="true"
                 android:text="@string/icon_comments"
                 />
             <TextView
@@ -106,12 +74,44 @@
                 android:layout_height="@dimen/listItemHeight"
                 android:gravity="center_vertical"
                 android:textColor="@android:color/white"
-                android:layout_toLeftOf="@+id/talkedIcon"
-                android:layout_marginRight="6sp"
+                android:layout_toRightOf="@+id/talkedIcon"
+                android:layout_marginLeft="6sp"
                 android:textSize="20sp"
                 android:text="@string/talked_today"
                 />
             </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/snoozeBackground"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/listItemHeight"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:gravity="right"
+            android:background="#CCFF5050"
+            android:visibility="gone"
+            >
+            <TextView
+                android:id="@+id/snoozeIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/listItemHeight"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:layout_alignParentEnd="true"
+                android:text="@string/icon_clock"
+                />
+            <TextView
+                android:id="@+id/snoozeText"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/listItemHeight"
+                android:gravity="center_vertical"
+                android:textColor="@android:color/white"
+                android:layout_toLeftOf="@+id/snoozeIcon"
+                android:layout_marginRight="6sp"
+                android:textSize="20sp"
+                android:text="@string/notification_snooze"
+                />
+        </RelativeLayout>
     </RelativeLayout>
     <ListView
     android:layout_width="wrap_content"
