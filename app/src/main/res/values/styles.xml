@@ -7,7 +7,7 @@
     </style>
 
     <style name="OptionText" parent="@android:style/TextAppearance.Medium">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <dimen name="listItemHeight">84dp</dimen>

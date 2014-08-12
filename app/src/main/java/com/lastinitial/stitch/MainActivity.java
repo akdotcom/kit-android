@@ -25,7 +25,6 @@ import android.widget.ListView;
 import android.widget.ResourceCursorAdapter;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>{
@@ -115,13 +114,13 @@ public class MainActivity extends Activity implements
         final ListView listView = (ListView) findViewById(R.id.entriesList);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long rowId) {
                 Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
-                ContactsContract.QuickContact.showQuickContact(
-                        adapterView.getContext(),
-                        view, contactUri,
-                        ContactsContract.QuickContact.MODE_LARGE,
-                        null);
+                Intent intent = new Intent(getApplicationContext(), EntryDetailsActivity.class);
+                intent.setData(contactUri);
+                intent.putExtra(DETAILS_DB_ROWID, rowId);
+                intent.setAction(Intent.ACTION_MAIN);
+                startActivity(intent);
             }
         });
 
@@ -144,26 +143,9 @@ public class MainActivity extends Activity implements
                     viewHolder.nextDescription = (TextView) view.findViewById(R.id.next_description);
                     viewHolder.nextValue = (TextView) view.findViewById(R.id.next_value);
                     viewHolder.quickbadge = (ImageView) view.findViewById(R.id.quickbadge);
-                    viewHolder.contactOptions = (ImageView) view.findViewById(R.id.contactOptions);
                     view.setTag(R.id.view_holder, viewHolder);
-
-                    // Initialize some stuff here that's constant across all rows
+                    // Initialize typeface here that's constant across all rows
                     viewHolder.nextDescription.setTypeface(FontUtils.getFontAwesome(context));
-                    viewHolder.contactOptions.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Uri contactUri = (Uri) view.getTag(R.id.view_lookup_uri);
-                            Long rowId = (Long) view.getTag(R.id.view_db_rowid);
-                            Intent intent = new Intent(
-                                    getApplicationContext(),
-                                    EntryDetailsActivity.class);
-                            intent.setData(contactUri);
-                            intent.putExtra(DETAILS_DB_ROWID, rowId);
-                            intent.setAction(Intent.ACTION_MAIN);
-                            startActivity(intent);
-                        }
-                    });
-
                 } else {
                     viewHolder = (ViewHolder) view.getTag(R.id.view_holder);
                 }
@@ -210,13 +192,8 @@ public class MainActivity extends Activity implements
                     view.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
                 }
 
-                int rowIdIndex = cursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID);
-                long rowId = cursor.getLong(rowIdIndex);
-                viewHolder.contactOptions.setTag(R.id.view_db_rowid, rowId);
-
                 final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
                 view.setTag(R.id.view_lookup_uri, lookupUri);
-                viewHolder.contactOptions.setTag(R.id.view_lookup_uri, lookupUri);
             }
         };
         listView.setAdapter(mAdapter);

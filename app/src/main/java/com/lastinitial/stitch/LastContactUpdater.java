@@ -15,6 +15,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -211,39 +212,17 @@ public class LastContactUpdater {
         long newLastContacted = dbLastContacted;
         dbCursor.close();
 
-        // Fetch the user's system contact ID
-        final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, dbLookupKey);
         ContentResolver resolver = context.getContentResolver();
-        Uri res = Contacts.lookupContact(resolver, lookupUri);
-        if (res == null) {
-            // Contact no longer exists in the address book but is still in the Stitch DB
-            return null;
-        }
-        String[] lookupFields = {
-                Contacts._ID,
-        };
-        Cursor c = resolver.query(res, lookupFields, null, null, null);
-        if (c == null || !c.moveToFirst()) {
-            // Contact not found via lookup key
-            return null;
-        }
-        long contactId = c.getLong(c.getColumnIndex(Contacts._ID));
 
-        // Fetch all phone numbers belonging to this contact
-        Cursor phoneCursor = resolver.query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                new String[] { ContactsContract.CommonDataKinds.Phone.NUMBER },
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + contactId,
-                null,
-                null);
+        // Fetch the user's system contact ID
+        Cursor c = getPhoneNumbersForContact(context, dbLookupKey, null);
         List<String> numbers = new ArrayList<String>();
-        if (phoneCursor != null) {
-            int numberIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-            while (phoneCursor.moveToNext()) {
-                numbers.add(phoneCursor.getString(numberIndex));
+        if (c != null) {
+            int numberIndex = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            while (c.moveToNext()) {
+                numbers.add(c.getString(numberIndex));
             }
         }
-
 
         // For all these numbers, check if there's been a recent call
         for (String number : numbers) {
@@ -290,5 +269,40 @@ public class LastContactUpdater {
         } else {
             return null;
         }
+    }
+
+    public Cursor getPhoneNumbersForContact(Context context,
+                                            String lookupKey,
+                                            String[] extraAttributes) {
+        // Fetch the user's system contact ID
+        final Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
+        ContentResolver resolver = context.getContentResolver();
+        Uri contentUri = Contacts.lookupContact(resolver, lookupUri);
+
+        String[] lookupFields = {
+                Contacts._ID,
+        };
+        Cursor c = resolver.query(contentUri, lookupFields, null, null, null);
+        if (c == null || !c.moveToFirst()) {
+            // Contact not found via lookup key
+            return null;
+        }
+        long contactId = c.getLong(c.getColumnIndex(Contacts._ID));
+
+        String[] attributes;
+        if (extraAttributes != null) {
+            attributes = Arrays.copyOf(extraAttributes, extraAttributes.length + 1);
+            attributes[extraAttributes.length] = ContactsContract.CommonDataKinds.Phone.NUMBER;
+        } else {
+            attributes = new String[] { ContactsContract.CommonDataKinds.Phone.NUMBER };
+        }
+
+        // Fetch all phone numbers belonging to this contact
+        return resolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                attributes,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + contactId,
+                null,
+                null);
     }
 }

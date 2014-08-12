@@ -1,150 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
     android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/detailsMain"
     android:weightSum="1">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:id="@+id/heroPhoto"
+        android:scaleType="centerCrop" />
+    <!--<ListView-->
+        <!--android:id="@+id/phoneNumberList"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+    <!--</ListView>-->
 
-    <QuickContactBadge
-        android:layout_width="wrap_content"
+    <TabHost
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="175dp"
-        android:minWidth="175dp"
-        android:scaleType="centerCrop"
-        android:layout_marginBottom="10dp"
-        android:layout_gravity="center_horizontal"
-        android:id="@+id/contactImage" />
+        android:id="@android:id/tabhost">
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/lastContactIcon"
-            android:layout_alignBaseline="@id/lastContactIcon"
-            style="@style/OptionText"
-            android:text="@string/last_in_touch"
-            android:textColor="#999999"
-            android:id="@+id/lastContactDescription" />
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:padding="10sp"
-            style="@style/OptionText"
-            android:text="@string/icon_comments"
-            android:textColor="#CC3366FF"
-            android:id="@+id/lastContactIcon" />
+                </TabWidget>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/lastContactIcon"
-            android:layout_alignBaseline="@id/lastContactIcon"
-            android:minWidth="100dp"
-            style="@style/OptionText"
-            android:text="LAST CONTACT"
-            android:textColor="#999999"
-            android:id="@+id/lastContact" />
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/lastContactIcon"
-            android:paddingLeft="10sp"
-            android:paddingRight="10sp"
-            style="@style/OptionText"
-            android:text="@string/icon_refresh"
-            android:textColor="#CC33CC33"
-            android:id="@+id/kitEveryIcon" />
+                <LinearLayout
+                    android:id="@+id/contactTab"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    >
 
-        <TextView
-            android:id="@+id/frequencyDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/OptionText"
-            android:layout_toRightOf="@id/kitEveryIcon"
-            android:layout_alignBaseline="@id/kitEveryIcon"/>
+                </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/kitEveryIcon"
-            android:layout_alignBaseline="@id/kitEveryIcon"
-            style="@style/OptionText"
-            android:text="@string/keep_in_touch_every"
-            android:id="@+id/kitEvery" />
+                <RelativeLayout
+                    android:id="@+id/settingsTab"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    >
+                    <TextView
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:gravity="center"
+                        android:textSize="25sp"
+                        android:text="@string/icon_comments"
+                        android:textColor="#CC3366FF"
+                        android:id="@+id/lastContactIcon" />
+                        <!--style="@style/OptionText"-->
 
-        <!--android:background="#EBF0FF"-->
-        <!--android:padding="4sp"-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_toLeftOf="@+id/nextDescriptionIcon"
-            android:layout_alignBaseline="@id/nextDescriptionIcon"
-            style="@style/OptionText"
-            android:text="@string/next_in_touch"
-            android:textColor="#999999"
-            android:id="@+id/nextDescription" />
-        <!--android:layout_alignLeft="@+id/lastContactDescription"-->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/lastContactIcon"
+                            android:layout_alignBaseline="@id/lastContactIcon"
+                            style="@style/OptionText"
+                            android:textColor="#999999"
+                            android:text="@string/last_in_touch"
+                            android:id="@+id/lastContactDescription" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/kitEveryIcon"
-            android:layout_centerHorizontal="true"
-            android:padding="10dp"
-            style="@style/OptionText"
-            android:text="@string/icon_clock"
-            android:textColor="#CCFF5050"
-            android:id="@+id/nextDescriptionIcon" />
 
-        <TextView
-            android:id="@+id/nextContact"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/nextDescriptionIcon"
-            android:layout_alignBaseline="@id/nextDescriptionIcon"
-            android:minWidth="100dp"
-            android:paddingBottom="5sp"
-            android:text="NEXT CONTACT"
-            android:textColor="#999999"
-            style="@style/OptionText" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/lastContactDescription"
+                            android:layout_alignBaseline="@id/lastContactIcon"
+                            android:layout_marginLeft="5sp"
+                            android:minWidth="100dp"
+                            style="@style/OptionText"
+                            android:textColor="#999999"
+                            android:text="LAST CONTACT"
+                            android:id="@+id/lastContact" />
 
-        <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/nextDescriptionIcon"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_gravity="center_horizontal" />
+                        <TextView
+                            android:layout_width="60dp"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/lastContactIcon"
+                            android:layout_alignParentLeft="true"
+                            android:gravity="center"
+                            android:textSize="25sp"
+                            android:text="@string/icon_refresh"
+                            android:textColor="#CC33CC33"
+                            android:id="@+id/kitEveryIcon" />
 
-    </RelativeLayout>
+                        <TextView
+                            android:id="@+id/frequencyDescription"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5sp"
+                            style="@style/OptionText"
+                            android:layout_toRightOf="@+id/kitEvery"
+                            android:layout_alignBaseline="@id/kitEveryIcon"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:minWidth="185dp"
-        android:text="@string/button_done"
-        android:id="@+id/buttonDone"
-        style="@style/OptionText"
-        android:layout_gravity="center_horizontal"
-        android:onClick="close"
-        android:padding="0dp"
-        android:paddingTop="0dp"
-        android:clickable="true"
-        android:enabled="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/kitEveryIcon"
+                            android:layout_alignBaseline="@id/kitEveryIcon"
+                            style="@style/OptionText"
+                            android:text="@string/keep_in_touch_every"
+                            android:id="@+id/kitEvery" />
 
-    </LinearLayout>
+                        <TextView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:layout_below="@id/kitEveryIcon"
+                            android:layout_alignParentLeft="true"
+                            android:gravity="center"
+                            android:textSize="25sp"
+                            android:text="@string/icon_clock"
+                            android:textColor="#CCFF5050"
+                            android:id="@+id/nextDescriptionIcon" />
+
+                        <!--android:background="#EBF0FF"-->
+                        <!--android:padding="4sp"-->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/nextDescriptionIcon"
+                            android:layout_alignBaseline="@id/nextDescriptionIcon"
+                            style="@style/OptionText"
+                            android:text="@string/next_in_touch"
+                            android:textColor="#999999"
+                            android:id="@+id/nextDescription" />
+                        <!--android:layout_alignLeft="@+id/lastContactDescription"-->
+
+                        <TextView
+                            android:id="@+id/nextContact"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/nextDescription"
+                            android:layout_alignBaseline="@id/nextDescriptionIcon"
+                            android:minWidth="100dp"
+                            android:layout_marginLeft="5sp"
+                            android:text="NEXT CONTACT"
+                            android:textColor="#999999"
+                            style="@style/OptionText" />
+
+                    <SeekBar
+                        android:id="@+id/seekBar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/nextDescriptionIcon"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_gravity="center_horizontal" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/seekBar"
+                        android:layout_marginTop="20dp"
+                        android:minWidth="185dp"
+                        android:text="@string/button_done"
+                        android:id="@+id/buttonDone"
+                        style="@style/OptionText"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_centerHorizontal="true"
+                        android:onClick="close"
+                        android:padding="0dp"
+                        android:paddingTop="0dp"
+                        android:clickable="true"
+                        android:enabled="true" />
+
+                </RelativeLayout>
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
+
+
+
+</LinearLayout>
+</ScrollView>

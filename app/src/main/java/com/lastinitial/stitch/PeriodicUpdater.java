@@ -145,7 +145,8 @@ public class PeriodicUpdater extends BroadcastReceiver {
             long rowId = dbCursor.getLong(rowIdIndex);
 
             Uri uri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
-            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            Intent intent = new Intent(context, EntryDetailsActivity.class);
+            intent.setAction(Intent.ACTION_VIEW);
             intent.setData(uri);
             PendingIntent pendingIntent =
                     PendingIntent.getActivity(

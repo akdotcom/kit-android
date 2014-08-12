@@ -1,55 +1,49 @@
 package com.lastinitial.stitch;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
+import android.telephony.PhoneNumberUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.QuickContactBadge;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Created by ak on 8/11/14.
+ */
 public class EntryDetailsActivity extends Activity {
-
+    private long rowId = -1L;
+    private String lookupKey = null;
     private ContactsDbAdapter mDbHelper;
     private LastContactUpdater mLastContactUpdater;
-    private String lookupKey = null;
-    private long rowId = -1L;
-
-    private ArrayAdapter<CharSequence> mTypeAdapter = null;
-    private ArrayAdapter<CharSequence> mTypePluralAdapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+
+        String screenName = "com.lastinitial.stitch.EntryDetailsActivity#" + intent.getAction();
+        AnalyticsUtil.logScreenImpression(this, screenName);
+
         setContentView(R.layout.entry_details);
-
-        AnalyticsUtil.logScreenImpression(this, "com.lastinitial.stitch.EntryDetailsActivity");
-
-        mTypeAdapter = ArrayAdapter.createFromResource(this,
-                R.array.frequency_unit_array, R.layout.date_spinner_item);
-        mTypePluralAdapter = ArrayAdapter.createFromResource(this,
-                R.array.frequency_unit_array_plural, R.layout.date_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        mTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mTypePluralAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ImageView heroPhoto = (ImageView) findViewById(R.id.heroPhoto);
 
         TextView tvLastContactIcon = (TextView) findViewById(R.id.lastContactIcon);
         TextView tvFrequencyIcon = (TextView) findViewById(R.id.kitEveryIcon);
@@ -58,18 +52,15 @@ public class EntryDetailsActivity extends Activity {
         tvFrequencyIcon.setTypeface(FontUtils.getFontAwesome(this));
         tvNextContactIcon.setTypeface(FontUtils.getFontAwesome(this));
 
+        rowId = intent.getLongExtra(MainActivity.DETAILS_DB_ROWID, -1L);
+        Uri uri = intent.getData();
+
+        long lastContacted = 0L;
+
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();
 
         mLastContactUpdater = new LastContactUpdater();
-
-        Intent intent = getIntent();
-        rowId = intent.getLongExtra(MainActivity.DETAILS_DB_ROWID, -1L);
-
-        Uri uri = intent.getData();
-
-        long lastContacted = 0L;
-        QuickContactBadge contactImage = (QuickContactBadge) findViewById(R.id.contactImage);
 
         String[] contactFields = {
                 Contacts.DISPLAY_NAME,
@@ -83,21 +74,18 @@ public class EntryDetailsActivity extends Activity {
             String name = cursor.getString(cursor.getColumnIndex(Contacts.DISPLAY_NAME));
             setTitle(name);
 
-            Uri contactUri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
-            contactImage.assignContactUri(contactUri);
-
             String photoUriString =
                     cursor.getString(cursor.getColumnIndex(Contacts.PHOTO_URI));
             if (photoUriString != null) {
-                contactImage.setImageURI(Uri.parse(photoUriString));
+                heroPhoto.setImageURI(Uri.parse(photoUriString));
             } else {
-                contactImage.setImageToDefault();
+                heroPhoto.setImageResource(R.drawable.ic_action_person);
             }
-
             int lastContactedIndex = cursor.getColumnIndex(Contacts.LAST_TIME_CONTACTED);
             lastContacted = cursor.getLong(lastContactedIndex);
 
-            if(rowId == -1L && mDbHelper.hasContact(lookupKey)) {
+            // If we haven't set the rowId and this lookupKey corresponds to someone in Stitch's DB
+            if (rowId == -1L && mDbHelper.hasContact(lookupKey)) {
                 Cursor dbCursor = mDbHelper.fetchContact(lookupKey);
                 rowId = dbCursor.getLong(dbCursor.getColumnIndex(ContactsDbAdapter.KEY_ROWID));
                 dbCursor.close();
@@ -114,7 +102,7 @@ public class EntryDetailsActivity extends Activity {
         if (rowId == -1L) {
             // Create database entry, default frequency = 1 month.
             rowId = mDbHelper.createContact(
-                    cursor.getString(cursor.getColumnIndex(Contacts.LOOKUP_KEY)),
+                    cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.LOOKUP_KEY)),
                     lastContacted,
                     MainActivity.CONTACT_TYPE_SYSTEM,
                     MainActivity.FREQUENCY_MONTHLY,
@@ -127,16 +115,107 @@ public class EntryDetailsActivity extends Activity {
         // We're done with the system contact information, so close the cursor.
         cursor.close();
 
+        // Set up tabs
+        TabHost tabHost = (TabHost) findViewById(android.R.id.tabhost);
+        tabHost.setup();
+        TabHost.TabSpec spec = tabHost.newTabSpec("CONTACT_TAB");
+        spec.setIndicator("Contact");
+        spec.setContent(R.id.contactTab);
+        tabHost.addTab(spec);
+
+        TabHost.TabSpec spec2 = tabHost.newTabSpec("SETTINGS_TAB");
+        spec2.setIndicator("Settings");
+        spec2.setContent(R.id.settingsTab);
+        tabHost.addTab(spec2);
+
+        if (intent.getAction() == Intent.ACTION_EDIT) {
+            tabHost.setCurrentTab(1);
+        }
+
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String s) {
+                AnalyticsUtil.logAction(
+                        EntryDetailsActivity.this, "navigation", "tab-changed-to-" + s);
+            }
+        });
+
+        // Fill in phone numbers on contact tab
+        LinearLayout contactTab = (LinearLayout) findViewById(R.id.contactTab);
+        String[] phoneTypeField =
+                new String[] {
+                        ContactsContract.CommonDataKinds.Phone.TYPE,
+                        ContactsContract.CommonDataKinds.Phone.LABEL
+                };
+        Cursor c = mLastContactUpdater.getPhoneNumbersForContact(this, lookupKey, phoneTypeField);
+        if (c != null) {
+            int numberIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            int typeIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+            int labelIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL);
+            List<String> uniqueNumbers = new ArrayList<String>();
+            while (c.moveToNext()) {
+                final String number = c.getString(numberIdx);
+                CharSequence type =
+                        ContactsContract.CommonDataKinds.Phone.getTypeLabel(
+                                getResources(),
+                                c.getInt(typeIdx),
+                                c.getString(labelIdx));
+                type = type.toString().toUpperCase();
+
+                // Avoid displaying identical phone numbers.
+                // This is gross, but PhoneNumberUtils doesn't offer a comparator and I'm in a hurry
+                boolean isUnique = true;
+                for (String uniqueNumber : uniqueNumbers) {
+                    if (PhoneNumberUtils.compare(this, uniqueNumber, number)) {
+                        isUnique = false;
+                        break;
+                    }
+                }
+                if (!isUnique) {
+                    break;
+                }
+                uniqueNumbers.add(number);
+
+                LayoutInflater inflater = getLayoutInflater();
+                View phoneNumberView = inflater.inflate(R.layout.item_phonenumber, null);
+                phoneNumberView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Uri uri = Uri.parse("tel:" + number);
+                        Intent intent = new Intent(Intent.ACTION_CALL, uri);
+                        startActivity(intent);
+                    }
+                });
+                TextView phoneNumber = (TextView) phoneNumberView.findViewById(R.id.phoneNumber);
+                phoneNumber.setText(PhoneNumberUtils.formatNumber(number));
+                TextView phoneType = (TextView) phoneNumberView.findViewById(R.id.phoneNumberType);
+                phoneType.setText(type);
+                TextView smsLogo = (TextView) phoneNumberView.findViewById(R.id.smsLogo);
+                TextView phoneLogo = (TextView) phoneNumberView.findViewById(R.id.phoneLogo);
+                smsLogo.setTypeface(FontUtils.getFontAwesome(this));
+                phoneLogo.setTypeface(FontUtils.getFontAwesome(this));
+                smsLogo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Uri uri = Uri.parse("smsto:" + number);
+                        Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+                        startActivity(intent);
+                    }
+                });
+                if (c.getPosition() == 0) {
+                    phoneNumberView.findViewById(R.id.horizontalDivider).setVisibility(View.INVISIBLE);
+                }
+
+                contactTab.addView(phoneNumberView);
+            }
+        }
+        c.close();
+
+        // Set up the settings tab
         Resources resources = getResources();
         final String[] freqArray = resources.getStringArray(R.array.frequency);
         final int[] freqTypes = resources.getIntArray(R.array.frequencyTypes);
         final int[] freqScalars = resources.getIntArray(R.array.frequencyScalars);
-        if (freqArray.length != freqTypes.length || freqArray.length != freqScalars.length) {
-            new Exception("Frequency arrays are not all equal length."
-                    + " frequency: " + freqArray.length
-                    + " frequencyTypes: " + freqTypes.length
-                    + " frequencyScalars: " + freqScalars.length);
-        }
 
         SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
         seekBar.setMax(freqArray.length - 1);
@@ -178,27 +257,9 @@ public class EntryDetailsActivity extends Activity {
         long lastContact = dbCursor.getLong(lastContactIndex);
         updateLastContactTextView(lastContact);
 
-        View lastContactInfo = findViewById(R.id.lastContact);
-        lastContactInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DialogFragment newFragment = DatePickerFragment.newInstance(R.id.lastContact);
-                newFragment.show(getFragmentManager(), "datePicker");
-            }
-        });
-
         int nextContactIndex = dbCursor.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT);
         long nextContact = dbCursor.getLong(nextContactIndex);
         updateNextContactTextView(nextContact);
-
-        View nextContactInfo = findViewById(R.id.nextContact);
-        nextContactInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DialogFragment newFragment = DatePickerFragment.newInstance(R.id.nextContact);
-                newFragment.show(getFragmentManager(), "datePicker");
-            }
-        });
 
         dbCursor.close();
     }
@@ -248,78 +309,6 @@ public class EntryDetailsActivity extends Activity {
             tvClockIcon.setTextColor(MainActivity.ALARM_ICON_COLOR);
         } else {
             tvClockIcon.setTextColor(MainActivity.LOW_PRIORITY_CLOCK_COLOR);
-        }
-
-    }
-
-    public void updateLastContact(long lastContact, int contactType) {
-        mDbHelper.updateLastContacted(rowId, lastContact, contactType);
-        Cursor c = mDbHelper.fetchContact(rowId);
-        long nextContact = c.getLong(c.getColumnIndex(ContactsDbAdapter.KEY_NEXT_CONTACT));
-        c.close();
-        updateLastContactTextView(lastContact);
-        updateNextContactTextView(nextContact);
-    }
-
-    public void updateNextContact(long nextContact) {
-        mDbHelper.updateNextContact(rowId, nextContact);
-        updateNextContactTextView(nextContact);
-    }
-
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
-
-        private static final String PARENT_VIEW_ID_KEY = "parentViewID";
-
-        public static DatePickerFragment newInstance(int viewId) {
-            DatePickerFragment dpf = new DatePickerFragment();
-
-            // Supply index input as an argument.
-            Bundle args = new Bundle();
-            args.putInt(PARENT_VIEW_ID_KEY, viewId);
-            dpf.setArguments(args);
-
-            return dpf;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            Calendar c = Calendar.getInstance();
-            View parentView = getParentView();
-            Object tagTime = parentView.getTag(R.id.view_time_millis);
-            if (tagTime != null) {
-                Long tagTimeLong = (Long) tagTime;
-                if (tagTimeLong != 0L) {
-                    c.setTimeInMillis((Long)tagTime);
-                }
-            }
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            // Do something with the date chosen by the user
-            Log.v("DatePickerFragment", "Date picked");
-            Calendar calendar = new GregorianCalendar(year, month, day);
-            EntryDetailsActivity activity = (EntryDetailsActivity) getActivity();
-            View parentView = getParentView();
-            if (parentView.getId() == R.id.lastContact) {
-                activity.updateLastContact(
-                        calendar.getTimeInMillis(), MainActivity.CONTACT_TYPE_MANUAL);
-            } else if (parentView.getId() == R.id.nextContact) {
-                activity.updateNextContact(calendar.getTimeInMillis());
-            }
-            parentView.setTag(R.id.view_time_millis, new Long(calendar.getTimeInMillis()));
-        }
-
-        private View getParentView() {
-            int parentViewId = getArguments().getInt(PARENT_VIEW_ID_KEY);
-            return getActivity().findViewById(parentViewId);
         }
     }
 

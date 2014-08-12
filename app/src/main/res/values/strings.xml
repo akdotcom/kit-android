@@ -12,10 +12,10 @@
     <string name="menu_insert">Add Contact</string>
     <string name="menu_remove">Remove</string>
     <string name="run_notifications">Run Notifications</string>
-    <string name="last_in_touch">Last talked</string>
-    <string name="next_in_touch">Talk again</string>
+    <string name="last_in_touch">Last talked:</string>
+    <string name="next_in_touch">Talk again:</string>
     <string name="unknown_time">Unknown</string>
-    <string name="keep_in_touch_every">Talk every</string>
+    <string name="keep_in_touch_every">Talk every:</string>
     <string name="add_contact">Add someone</string>
     <string name="its_been_a_while">It\'s been a while since you last talked.</string>
     <string name="you_last_talked">You last talked</string>
@@ -49,6 +49,9 @@
     <string name="icon_check">&#xf00c;</string>
     <string name="icon_leftarrow">&#xf104;</string>
     <string name="icon_rightarrow">&#xf105;</string>
+    <string name="icon_phone">&#xf095;</string>
+    <string name="icon_comment">&#xf075;</string>
+    <string name="icon_user">&#xf007;</string>
 
     <string-array name="frequency_unit_array">
         <item>day</item>

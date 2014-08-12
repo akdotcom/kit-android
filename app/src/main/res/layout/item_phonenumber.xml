@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:gravity="center_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/phoneLogo"
+        android:layout_toLeftOf="@+id/smsLogo"
+        >
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PHONE_NUMBER"
+        android:textSize="18sp"
+        android:id="@+id/phoneNumber"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#66000000"
+        android:text="TYPE"
+        android:id="@+id/phoneNumberType"
+        android:layout_below="@+id/phoneNumber"
+        android:layout_alignLeft="@+id/phoneNumber" />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="70dp"
+        android:textSize="30sp"
+        android:paddingTop="5dp"
+        android:gravity="center"
+        android:text="@string/icon_phone"
+        android:textColor="#99000000"
+        android:id="@+id/phoneLogo"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_toLeftOf="@+id/smsLogo"
+        android:gravity="center_vertical"
+        android:background="#11000000" />
+
+    <TextView
+        android:layout_width="60dp"
+        android:layout_height="70dp"
+        android:textSize="25sp"
+        android:paddingBottom="5dp"
+        android:gravity="center"
+        android:text="@string/icon_comment"
+        android:textColor="#99000000"
+        android:id="@+id/smsLogo"
+        android:layout_alignParentRight="true" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#11000000"
+        android:id="@+id/horizontalDivider"/>
+</RelativeLayout>
