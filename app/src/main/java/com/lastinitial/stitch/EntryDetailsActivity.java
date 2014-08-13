@@ -331,6 +331,12 @@ public class EntryDetailsActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void viewSystemContact(View view) {
+        Uri uri = Uri.withAppendedPath(Contacts.CONTENT_LOOKUP_URI, lookupKey);
+        Intent intent = new Intent(Intent.ACTION_EDIT, uri);
+        startActivity(intent);
+    }
+
     public void deleteContact() {
         if (rowId != -1L) {
             mDbHelper.deleteContact(rowId);
