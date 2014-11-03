@@ -26,14 +26,23 @@ import android.widget.ResourceCursorAdapter;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends Activity implements
         LoaderManager.LoaderCallbacks<Cursor>{
+
+    public static final String MIXPANEL_TOKEN = "238731475f4d6f9f0da9b5984141962b";
 
     public static final String DETAILS_DB_ROWID = "com.lastinitial.stitch.DETAILS_DB_ROWID";
 
     public static final String HAS_SWIPED = "HAS_SWIPED";
     public static final String HAS_SHOWN_NUDGE_EDU_3 = "HAS_SHOWN_NUDGE_EDU_3";
     public static final String EDU_INFO_PREFS = "EDU_INFO_PREFS";
+
+    public static final String NOTIFICATION_BAR_REFERRER_EXTRA = "NOTIFICATION_BAR";
 
     public static final int FREQUENCY_DAILY = 0;
     public static final int FREQUENCY_WEEKLY = 1;
@@ -48,6 +57,7 @@ public class MainActivity extends Activity implements
     // Loader for this component
     private static final int CONTACTS_LOADER = 0;
 
+    private MixpanelAPI mMixpanel;
     private ContactsDbAdapter mDbHelper;
     private ResourceCursorAdapter mAdapter;
     private LastContactUpdater mUpdater = new LastContactUpdater();
@@ -71,6 +81,45 @@ public class MainActivity extends Activity implements
 
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();
+
+        // Let's record how many contacts this person has in Stitch with each event
+        mMixpanel = MixpanelAPI.getInstance(this, MIXPANEL_TOKEN);
+        JSONObject superProps = new JSONObject();
+        try {
+            superProps.put("Number of App Contacts", mDbHelper.numContacts());
+            superProps.put("Is Production User", AnalyticsUtil.isRelease(this));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mMixpanel.registerSuperProperties(superProps);
+
+        JSONObject setOnceProps = new JSONObject();
+        try {
+            setOnceProps.put("First Opened App", System.currentTimeMillis());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mMixpanel.registerSuperPropertiesOnce(setOnceProps);
+
+        // Record app opens as an event
+        JSONObject props = new JSONObject();
+        Intent intent = getIntent();
+        String source = "Unknown";
+        if (intent.hasCategory(Intent.CATEGORY_LAUNCHER)) {
+            source = "Launcher";
+        } else {
+            String referrer = intent.getStringExtra(Intent.EXTRA_REFERRER);
+            if (NOTIFICATION_BAR_REFERRER_EXTRA.equals(referrer)) {
+                source = "Notification";
+            }
+        }
+        try {
+            props.put("Source", source);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        mMixpanel.track("App Opened", props);
+
 
         mUpdater = new LastContactUpdater();
 //        mUpdater.update(this, mDbHelper); // This now happens in onStart
@@ -213,14 +262,21 @@ public class MainActivity extends Activity implements
                                                   boolean isDismissRight) {
                                 for (int position : reverseSortedPositions) {
                                     long itemId = mAdapter.getItemId(position);
+                                    JSONObject props = new JSONObject();
                                     if (isDismissRight) {
                                         mDbHelper.updateLastContacted(itemId,
                                                 System.currentTimeMillis(),
                                                 CONTACT_TYPE_MANUAL);
                                         AnalyticsUtil.logAction(
-                                                MainActivity .this,
+                                                MainActivity.this,
                                                 "contacts",
                                                 "main-activity-swipe-talked-today");
+                                        try {
+                                            props.put("Swipe Type", "Talked Today");
+                                            props.put("Swipe Direction", "Right");
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
                                     } else {
                                         SnoozeUtil snoozeUtil = new SnoozeUtil();
                                         snoozeUtil.snoozeContact(
@@ -228,10 +284,17 @@ public class MainActivity extends Activity implements
                                                 itemId,
                                                 SnoozeUtil.DEFAULT_SNOOZE_TIME);
                                         AnalyticsUtil.logAction(
-                                                MainActivity .this,
+                                                MainActivity.this,
                                                 "contacts",
                                                 "main-activity-swipe-snooze");
+                                        try {
+                                            props.put("Swipe Type", "Snooze");
+                                            props.put("Swipe Direction", "Left");
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
+                                    mMixpanel.track("Swiped", null);
                                 }
                                 // Todo(ak): This is gross. Because the ResourceCursorAdapter
                                 // does all this gunk below (like swapping cursors)
@@ -423,6 +486,7 @@ public class MainActivity extends Activity implements
 
     public void addContact() {
         AnalyticsUtil.logAction(this, "contacts", "main-activity-add-contact-bar");
+        mMixpanel.track("Add Contact Tapped", null);
 
         Intent pickContactIntent = new Intent( Intent.ACTION_PICK, Contacts.CONTENT_FILTER_URI );
         pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
@@ -436,14 +500,23 @@ public class MainActivity extends Activity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
+                mMixpanel.track("Add Contact Completed", null);
+
                 Uri contactUri = data.getData();
                 Log.v(this.getClass().getCanonicalName(), "picker returned URI: " + contactUri);
+
                 Intent intent = new Intent(this, EntryDetailsActivity.class);
                 intent.setData(contactUri);
                 intent.setAction(Intent.ACTION_EDIT);
                 startActivity(intent);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mMixpanel.flush();
+        super.onDestroy();
     }
 
     static class ViewHolder {

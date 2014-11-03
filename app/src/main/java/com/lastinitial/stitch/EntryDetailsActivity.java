@@ -22,6 +22,11 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +38,7 @@ public class EntryDetailsActivity extends Activity {
     private String lookupKey = null;
     private ContactsDbAdapter mDbHelper;
     private LastContactUpdater mLastContactUpdater;
+    private MixpanelAPI mMixpanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,12 @@ public class EntryDetailsActivity extends Activity {
         Uri uri = intent.getData();
 
         long lastContacted = 0L;
+
+        mMixpanel = MixpanelAPI.getInstance(this, MainActivity.MIXPANEL_TOKEN);
+
+        if (intent.getAction().equals(Intent.ACTION_VIEW)) {
+            mMixpanel.track("Notification Tap-through", null);
+        }
 
         mDbHelper = new ContactsDbAdapter(this);
         mDbHelper.open();
@@ -152,7 +164,7 @@ public class EntryDetailsActivity extends Activity {
             int numberIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
             int typeIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
             int labelIdx = c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.LABEL);
-            List<String> uniqueNumbers = new ArrayList<String>();
+            final List<String> uniqueNumbers = new ArrayList<String>();
             while (c.moveToNext()) {
                 final String number = c.getString(numberIdx);
                 CharSequence type =
@@ -181,6 +193,14 @@ public class EntryDetailsActivity extends Activity {
                 phoneNumberView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        JSONObject props = new JSONObject();
+                        try {
+                            props.put("Number of Phone Numbers", uniqueNumbers.size());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mMixpanel.track("Call Made", null);
+
                         Uri uri = Uri.parse("tel:" + number);
                         Intent intent = new Intent(Intent.ACTION_CALL, uri);
                         startActivity(intent);
@@ -197,6 +217,14 @@ public class EntryDetailsActivity extends Activity {
                 smsLogo.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        JSONObject props = new JSONObject();
+                        try {
+                            props.put("Number of Phone Numbers", uniqueNumbers.size());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mMixpanel.track("Call Made", null);
+
                         Uri uri = Uri.parse("smsto:" + number);
                         Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
                         startActivity(intent);
@@ -342,6 +370,7 @@ public class EntryDetailsActivity extends Activity {
             mDbHelper.deleteContact(rowId);
         }
         AnalyticsUtil.logAction(this, "contacts", "entry-details-remove-contact");
+        mMixpanel.track("Removed Contact", null);
         finish();
     }
 

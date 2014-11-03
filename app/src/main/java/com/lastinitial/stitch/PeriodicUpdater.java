@@ -19,6 +19,10 @@ import android.util.Log;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -122,6 +126,18 @@ public class PeriodicUpdater extends BroadcastReceiver {
             }
         }
 
+        MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, MainActivity.MIXPANEL_TOKEN);
+        if (AnalyticsUtil.isRelease(context)) {
+            JSONObject props = new JSONObject();
+            try {
+                props.put("Alerting Users", ids.size());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            mixpanel.track("Notified", props);
+        }
+
+
         if (ids.size() == 1) {
             notificationBuilder.setContentTitle("Stitch with " + names.get(0));
             // Contacts were returned in order of nextContact descending, so if there's only one
@@ -186,6 +202,7 @@ public class PeriodicUpdater extends BroadcastReceiver {
             }
 
             Intent intent = new Intent(context, MainActivity.class);
+            intent.putExtra(Intent.EXTRA_REFERRER, MainActivity.NOTIFICATION_BAR_REFERRER_EXTRA);
             PendingIntent pendingIntent =
                     PendingIntent.getActivity(
                             context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
