@@ -225,7 +225,7 @@ public class EntryDetailsActivity extends Activity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        mMixpanel.track("Call Made", null);
+                        mMixpanel.track("SMS Sent", null);
 
                         Uri uri = Uri.parse("smsto:" + number);
                         Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
