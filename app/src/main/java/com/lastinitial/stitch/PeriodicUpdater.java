@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -138,12 +139,11 @@ public class PeriodicUpdater extends BroadcastReceiver {
         }
         mixpanel.track("Notified", props);
 
+        if (ids.size() > 0) {
+            int index = new Random().nextInt(ids.size());
 
-        if (ids.size() == 1) {
-            notificationBuilder.setContentTitle("Stitch with " + names.get(0));
-            // Contacts were returned in order of nextContact descending, so if there's only one
-            // person to notify on, it's the first contact in the list.
-            dbCursor.moveToFirst();
+            notificationBuilder.setContentTitle("Stitch with " + names.get(index));
+            dbCursor.moveToPosition(index);
             long lastContacted = dbCursor.getLong(lastContactedIndex);
             String durationDescription = null;
             if (lastContacted == 0) {
@@ -154,8 +154,8 @@ public class PeriodicUpdater extends BroadcastReceiver {
                         lastContacted, System.currentTimeMillis());
             }
             notificationBuilder.setContentText(durationDescription);
-            if (photos.get(0) != null) {
-                setNotificationImage(context, photos.get(0), notificationBuilder);
+            if (photos.get(index) != null) {
+                setNotificationImage(context, photos.get(index), notificationBuilder);
             }
 
             String lookupKey = dbCursor.getString(lookupKeyIndex);
@@ -170,9 +170,42 @@ public class PeriodicUpdater extends BroadcastReceiver {
                             context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             notificationBuilder.setContentIntent(pendingIntent);
 
+            Cursor c = LastContactUpdater.getPhoneNumbersForContact(context, lookupKey, null);
+            if (c != null && c.moveToFirst()) {
+                Intent callIntent = new Intent(context, EntryDetailsActivity.class);
+                callIntent.setAction(Intent.ACTION_CALL);
+                callIntent.setData(uri);
+                callIntent.putExtra(NOTIFICATION_ID_EXTRA, SINGLE_NOTIFICATION_ID);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+                stackBuilder.addParentStack(EntryDetailsActivity.class);
+                stackBuilder.addNextIntent(callIntent);
+                PendingIntent callPIntent = stackBuilder.getPendingIntent(
+                        0, PendingIntent.FLAG_CANCEL_CURRENT);
+                String callString = context.getResources().getString(R.string.notification_call);
+                notificationBuilder.addAction(
+                        android.R.drawable.sym_action_call, callString, callPIntent);
+
+                Intent smsIntent = new Intent(context, EntryDetailsActivity.class);
+                smsIntent.setAction(Intent.ACTION_SENDTO);
+                smsIntent.setData(uri);
+                smsIntent.putExtra(NOTIFICATION_ID_EXTRA, SINGLE_NOTIFICATION_ID);
+                stackBuilder = TaskStackBuilder.create(context);
+                stackBuilder.addParentStack(EntryDetailsActivity.class);
+                stackBuilder.addNextIntent(smsIntent);
+                PendingIntent smsPIntent = stackBuilder.getPendingIntent(
+                        0, PendingIntent.FLAG_CANCEL_CURRENT);
+                String smsString = context.getResources().getString(R.string.notification_sms);
+                notificationBuilder.addAction(
+                        android.R.drawable.sym_action_chat, smsString, smsPIntent);
+            }
+            if (c != null) {
+                c.close();
+            }
+
             Intent snoozeIntent = new Intent(context, SnoozeUtil.class);
             snoozeIntent.setAction(SnoozeUtil.ACTION_SNOOZE);
             snoozeIntent.putExtra(MainActivity.DETAILS_DB_ROWID, rowId);
+            snoozeIntent.putExtra(NOTIFICATION_ID_EXTRA, SINGLE_NOTIFICATION_ID);
             PendingIntent snoozePIntent =
                     PendingIntent.getService(
                             context, 0, snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -181,52 +214,11 @@ public class PeriodicUpdater extends BroadcastReceiver {
                     R.drawable.clock_notification_icon, snooze, snoozePIntent);
 
             Notification notification = notificationBuilder.build();
-            notificationManager.notify(0, notification);
-
-        } else if (ids.size() > 1) {
-            notificationBuilder.setContentTitle(context.getString(R.string.stay_in_touch));
-
-            int index = new Random().nextInt(ids.size());
-
-            // TODO(ak): Think about how to localize this.
-            String contentText = "with ";
-            if (ids.size() == 2) {
-                contentText += names.get(index) + " and " + names.get((index + 1) % 2);
-            } else {
-                contentText += names.get(index) + " and " + (ids.size()-1) + " others";
-            }
-            notificationBuilder.setContentText(contentText);
-            notificationBuilder.setNumber(ids.size());
-
-            if (photos.get(index) != null) {
-                setNotificationImage(context, photos.get(index), notificationBuilder);
-            }
-
-            Intent intent = new Intent(context, MainActivity.class);
-            intent.putExtra(Intent.EXTRA_REFERRER, MainActivity.NOTIFICATION_BAR_REFERRER_EXTRA);
-            PendingIntent pendingIntent =
-                    PendingIntent.getActivity(
-                            context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            notificationBuilder.setContentIntent(pendingIntent);
-
-            // Add snooze action button.
-            Intent snoozeIntent = new Intent(context, SnoozeUtil.class);
-            snoozeIntent.setAction(SnoozeUtil.ACTION_SNOOZE);
-            snoozeIntent.putExtra(MainActivity.DETAILS_DB_ROWID, ids.get(index));
-            PendingIntent snoozePIntent =
-                    PendingIntent.getService(
-                            context, 0, snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-            String snooze = context.getResources().getString(R.string.notification_snooze);
-            String actionText = snooze + " " + names.get(index);
-            notificationBuilder.addAction(
-                    R.drawable.clock_notification_icon, actionText, snoozePIntent);
-
-            Notification notification = notificationBuilder.build();
-            notificationManager.notify(0, notification);
+            notificationManager.notify(SINGLE_NOTIFICATION_ID, notification);
         } else {
             // No notifications to be sent. Cancel this notification in case there's somehow one
             // lingering.
-            notificationManager.cancel(0);
+            notificationManager.cancel(SINGLE_NOTIFICATION_ID);
         }
 
         dbCursor.close();

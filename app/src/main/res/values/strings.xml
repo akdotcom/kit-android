@@ -31,6 +31,8 @@
     <string name="button_rate">Rate on Google Play</string>
     <string name="button_done">Set</string>
     <string name="notification_snooze">Snooze</string>
+    <string name="notification_call">Call</string>
+    <string name="notification_sms">Text</string>
     <string name="feedback_email_subject">Stitch feedback</string>
     <string name="nudge_cta">Howdy! Tap above to start adding the people you want to stay in touch with. For example:</string>
     <string name="nudge_continued">Nice! Let\'s keep going. Who else?</string>
