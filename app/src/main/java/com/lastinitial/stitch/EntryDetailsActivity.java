@@ -184,7 +184,7 @@ public class EntryDetailsActivity extends Activity {
                     }
                 }
                 if (!isUnique) {
-                    break;
+                    continue;
                 }
                 uniqueNumbers.add(number);
 
