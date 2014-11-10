@@ -36,7 +36,7 @@ public class SnoozeUtil extends IntentService {
             Intent notificationIntent = new Intent(this, PeriodicUpdater.class);
             sendBroadcast(notificationIntent);
         } else {
-            Log.v("SnoozeUtil", "Unkonwn action: " + intent.getAction());
+            Log.v("SnoozeUtil", "Unknown action: " + intent.getAction());
         }
     }
 
