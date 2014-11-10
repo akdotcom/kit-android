@@ -196,6 +196,7 @@ public class EntryDetailsActivity extends Activity {
                         JSONObject props = new JSONObject();
                         try {
                             props.put("Number of Phone Numbers", uniqueNumbers.size());
+                            props.put("Source", "Details Screen");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -220,6 +221,7 @@ public class EntryDetailsActivity extends Activity {
                         JSONObject props = new JSONObject();
                         try {
                             props.put("Number of Phone Numbers", uniqueNumbers.size());
+                            props.put("Source", "Details Screen");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
