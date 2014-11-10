@@ -238,8 +238,52 @@ public class EntryDetailsActivity extends Activity {
 
                 contactTab.addView(phoneNumberView);
             }
+            c.close();
+
+            // Check if we launched this activity with an explicit order to initiate a phone call
+            // or text message.
+            if (uniqueNumbers.size() > 0) {
+                // Check if there's a notification id in the intent so we can cancel the
+                // notification upon completing the action
+                int notificationId = intent.getIntExtra(
+                        PeriodicUpdater.NOTIFICATION_ID_EXTRA,
+                        PeriodicUpdater.INVALID_NOTIFICATION_ID);
+
+                if (intent.ACTION_CALL.equals(intent.getAction())) {
+                    JSONObject props = new JSONObject();
+                    try {
+                        props.put("Number of Phone Numbers", uniqueNumbers.size());
+                        props.put("Source", "Notification");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mMixpanel.track("Call Made", null);
+
+                    if (notificationId != PeriodicUpdater.INVALID_NOTIFICATION_ID) {
+                        PeriodicUpdater.cancelNotification(this, notificationId);
+                    }
+
+                    Uri callUri = Uri.parse("tel:" + uniqueNumbers.get(0));
+                    startActivity(new Intent(Intent.ACTION_CALL, callUri));
+                } else if (intent.ACTION_SENDTO.equals(intent.getAction())) {
+                    JSONObject props = new JSONObject();
+                    try {
+                        props.put("Number of Phone Numbers", uniqueNumbers.size());
+                        props.put("Source", "Notification");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mMixpanel.track("SMS Sent", null);
+
+                    if (notificationId != PeriodicUpdater.INVALID_NOTIFICATION_ID) {
+                        PeriodicUpdater.cancelNotification(this, notificationId);
+                    }
+
+                    Uri smsUri = Uri.parse("smsto:" + uniqueNumbers.get(0));
+                    startActivity(new Intent(Intent.ACTION_SENDTO, smsUri));
+                }
+            }
         }
-        c.close();
 
         // Set up the settings tab
         Resources resources = getResources();
