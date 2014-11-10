@@ -127,15 +127,13 @@ public class PeriodicUpdater extends BroadcastReceiver {
         }
 
         MixpanelAPI mixpanel = MixpanelAPI.getInstance(context, MainActivity.MIXPANEL_TOKEN);
-        if (AnalyticsUtil.isRelease(context)) {
-            JSONObject props = new JSONObject();
-            try {
-                props.put("Alerting Users", ids.size());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            mixpanel.track("Notified", props);
+        JSONObject props = new JSONObject();
+        try {
+            props.put("Alerting Users", ids.size());
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        mixpanel.track("Notified", props);
 
 
         if (ids.size() == 1) {
