@@ -16,7 +16,7 @@
         android:layout_height="180dp"
         android:id="@+id/heroPhoto"
         android:scaleType="centerCrop"
-        android:onClick="viewSystemContact"/>
+        />
     <!--<ListView-->
         <!--android:id="@+id/phoneNumberList"-->
         <!--android:layout_width="match_parent"-->
