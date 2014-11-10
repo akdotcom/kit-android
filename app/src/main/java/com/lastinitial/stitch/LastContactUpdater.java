@@ -271,7 +271,7 @@ public class LastContactUpdater {
         }
     }
 
-    public Cursor getPhoneNumbersForContact(Context context,
+    public static Cursor getPhoneNumbersForContact(Context context,
                                             String lookupKey,
                                             String[] extraAttributes) {
         // Fetch the user's system contact ID
