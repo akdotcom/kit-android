@@ -33,6 +33,9 @@ import java.util.Random;
  * Created by ak on 3/31/14.
  */
 public class PeriodicUpdater extends BroadcastReceiver {
+    public static final String NOTIFICATION_ID_EXTRA = "NOTIFICATION_ID_EXTRA";
+    public static final int INVALID_NOTIFICATION_ID = -1;
+    private static final int SINGLE_NOTIFICATION_ID = 0;
     private static final String TAG = "PeriodicUpdater";
     private AlarmManager alarmMgr;
     private PendingIntent alarmIntent;
