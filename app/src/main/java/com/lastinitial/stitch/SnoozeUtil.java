@@ -33,8 +33,12 @@ public class SnoozeUtil extends IntentService {
             }
             snoozeContact(this, rowId, DEFAULT_SNOOZE_TIME);
 
-            Intent notificationIntent = new Intent(this, PeriodicUpdater.class);
-            sendBroadcast(notificationIntent);
+            int notificationId = intent.getIntExtra(
+                    PeriodicUpdater.NOTIFICATION_ID_EXTRA,
+                    PeriodicUpdater.INVALID_NOTIFICATION_ID);
+            if (notificationId != PeriodicUpdater.INVALID_NOTIFICATION_ID) {
+                PeriodicUpdater.cancelNotification(this, notificationId);
+            }
         } else {
             Log.v("SnoozeUtil", "Unknown action: " + intent.getAction());
         }
