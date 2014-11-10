@@ -230,8 +230,12 @@ public class PeriodicUpdater extends BroadcastReceiver {
         }
 
         dbCursor.close();
+    }
 
-
+    public static void cancelNotification(Context context, int id) {
+        NotificationManager notificationManager = (NotificationManager)
+                context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(id);
     }
 
     protected void setNotificationImage(Context context,
