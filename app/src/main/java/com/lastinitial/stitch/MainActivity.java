@@ -294,7 +294,7 @@ public class MainActivity extends Activity implements
                                             e.printStackTrace();
                                         }
                                     }
-                                    mMixpanel.track("Swiped", null);
+                                    mMixpanel.track("Swiped", props);
                                 }
                                 // Todo(ak): This is gross. Because the ResourceCursorAdapter
                                 // does all this gunk below (like swapping cursors)
